@@ -1,33 +1,22 @@
 import React from "react";
-import logo from "./logo.svg";
-import { Button } from "./components/ui/button";
-import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Nav } from "./components/nav-overlay/NavOverlay";
+import { Events } from "./pages/Events";
+import { Members } from "./pages/Members";
+import { Discussions } from "./pages/Discussions";
 
 function App() {
   return (
-    <>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.?
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          <div className="w-1/2 bg-white text-black font-sans">Hello</div>
-        </header>
-      </div>
-      <div className="container">
-        <h1>Hello</h1>
-        <Button>Click me</Button>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<Nav />}>
+          <Route path="events" element={<Events />} />
+          <Route path="members" element={<Members />} />
+          <Route path="discussions" element={<Discussions />} />
+        </Route>
+        <Route path="*" element={<Navigate to="events" />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
