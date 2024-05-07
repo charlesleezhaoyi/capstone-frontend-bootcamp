@@ -18,7 +18,7 @@ export const Nav: FC = () => {
   const mobileHeader = (
     <nav className="flex flex-row justify-between items-center md:hidden">
       <Sheet>
-        <SheetTrigger>
+        <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0">
             <Menu className="h-5 w-5" />
             <span className="sr-only">Toggle navigation menu</span>
@@ -30,7 +30,7 @@ export const Nav: FC = () => {
       </Sheet>
       <span className="font-bold text-xl">{rootPath}</span>
       <DropdownMenu>
-        <DropdownMenuTrigger>
+        <DropdownMenuTrigger asChild>
           <Button variant="outline" size="icon" className="shrink-0">
             <CircleUserRound className="h-5 w-5" />
             <span className="sr-only">Toggle user profile menu</span>
