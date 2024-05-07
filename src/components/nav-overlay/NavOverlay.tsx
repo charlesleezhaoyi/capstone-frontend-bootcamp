@@ -1,36 +1,77 @@
-import React, { FC, ReactElement } from "react";
-import { Outlet } from "react-router-dom";
+import React, { FC, ReactNode } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import { NavMenu } from "./NavMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Sheet, SheetTrigger, SheetContent } from "../ui/sheet";
 import { Button } from "../ui/button";
-import { Menu } from "lucide-react";
+import { Menu, CircleUserRound } from "lucide-react";
 
-export const Nav: FC = (props) => {
+export const Nav: FC = () => {
+  const { pathname } = useLocation();
+  const rootPath = pathname.split("/")[1];
+
+  const mobileHeader = (
+    <nav className="flex flex-row justify-between items-center md:hidden">
+      <Sheet>
+        <SheetTrigger>
+          <Button variant="outline" size="icon" className="shrink-0">
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">Toggle navigation menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="left" className="flex-col flex">
+          <NavMenu inSheet={true} />
+        </SheetContent>
+      </Sheet>
+      <span className="font-bold text-xl">{rootPath}</span>
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <Button variant="outline" size="icon" className="shrink-0">
+            <CircleUserRound className="h-5 w-5" />
+            <span className="sr-only">Toggle user profile menu</span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem>
+            <Button variant="ghost" className="w-full">
+              Login
+            </Button>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Button className="text-white w-full">Sign Up</Button>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </nav>
+  );
+
+  const desktopHeader = (
+    <nav className="hidden md:flex flex-row justify-between items-center px-5">
+      <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
+      <div className="flex flex-row">
+        <Button variant="ghost" className="w-full text-md">
+          Login
+        </Button>
+        <Button className="text-white w-full text-md rounded-lg">
+          Sign Up
+        </Button>
+      </div>
+    </nav>
+  );
+
   return (
     <div className="flex h-screen w-screen flex-col">
-      <header className="sticky top-0 flex flex-row justify-between bg-black text-white">
-        <nav className="flex flex-row">
-          <Sheet>
-            <SheetTrigger>
-              <Button
-                variant="outline"
-                size="icon"
-                className="shrink-0 md:hidden text-black"
-              >
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle navigation menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left">
-              <NavMenu />
-            </SheetContent>
-          </Sheet>
-          <h3>OUR PRODUCT NAME</h3>
-        </nav>
-        <h3>PROFILE LOGO</h3>
+      <header className="sticky top-0 block text-secondary p-3">
+        {mobileHeader}
+        {desktopHeader}
       </header>
       <main className="flex flex-row h-full">
-        <div className="hidden md:flex">
+        <div className="hidden md:flex flex-col p-6 w-[30%] max-w-[300px] border-t-2 border-secondary">
           <NavMenu />
         </div>
         <Outlet />
