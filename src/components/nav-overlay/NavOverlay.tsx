@@ -50,21 +50,25 @@ export const Nav: FC = () => {
     </nav>
   );
 
+  const desktopHeader = (
+    <nav className="hidden md:flex flex-row justify-between items-center px-5">
+      <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
+      <div className="flex flex-row">
+        <Button variant="ghost" className="w-full text-md">
+          Login
+        </Button>
+        <Button className="text-white w-full text-md rounded-lg">
+          Sign Up
+        </Button>
+      </div>
+    </nav>
+  );
+
   return (
     <div className="flex h-screen w-screen flex-col">
       <header className="sticky top-0 block text-secondary p-3">
         {mobileHeader}
-        <nav className="hidden md:flex flex-row justify-between items-center px-5">
-          <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
-          <div className="flex flex-row">
-            <Button variant="ghost" className="w-full text-md">
-              Login
-            </Button>
-            <Button className="text-white w-full text-md rounded-lg">
-              Sign Up
-            </Button>
-          </div>
-        </nav>
+        {desktopHeader}
       </header>
       <main className="flex flex-row h-full">
         <div className="hidden md:flex flex-col p-6 w-[30%] max-w-[300px] border-t-2 border-secondary">
