@@ -4,13 +4,27 @@ import { Nav } from "./components/nav-overlay/NavOverlay";
 import { Events } from "./pages/Events";
 import { Members } from "./pages/Members";
 import { Discussions } from "./pages/Discussions";
+import { IndividualOnboarding } from "./pages/IndividualOnboarding";
+
+// import AuthWrapper from "./components/auth0/AuthWrapper";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Nav />}>
-          <Route path="events" element={<Events />} />
+          <Route
+            path="events"
+            element={
+              // <AuthWrapper>
+              <Events />
+              // </AuthWrapper>
+            }
+          />
+          <Route
+            path="individual-onboarding"
+            element={<IndividualOnboarding />}
+          />
           <Route path="members" element={<Members />} />
           <Route path="discussions" element={<Discussions />} />
         </Route>

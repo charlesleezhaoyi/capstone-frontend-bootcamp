@@ -11,6 +11,7 @@ import { Sheet, SheetTrigger, SheetContent } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Menu, CircleUserRound } from "lucide-react";
 import { Auth0Provider } from "@auth0/auth0-react";
+import LoginButton from "../auth0/LoginButton";
 
 export const Nav: FC = () => {
   const { pathname } = useLocation();
@@ -43,9 +44,7 @@ export const Nav: FC = () => {
               domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
               clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ""}
             >
-              <Button variant="ghost" className="w-full">
-                Login
-              </Button>
+              <LoginButton></LoginButton>
             </Auth0Provider>
           </DropdownMenuItem>
           <DropdownMenuItem>
@@ -60,9 +59,12 @@ export const Nav: FC = () => {
     <nav className="hidden md:flex flex-row justify-between items-center px-5">
       <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
       <div className="flex flex-row">
-        <Button variant="ghost" className="w-full text-md">
-          Login
-        </Button>
+        <Auth0Provider
+          domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
+          clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ""}
+        >
+          <LoginButton></LoginButton>
+        </Auth0Provider>
         <Button className="text-white w-full text-md rounded-lg">
           Sign Up
         </Button>
