@@ -10,6 +10,7 @@ import {
 import { Sheet, SheetTrigger, SheetContent } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Menu, CircleUserRound } from "lucide-react";
+import { Auth0Provider } from "@auth0/auth0-react";
 
 export const Nav: FC = () => {
   const { pathname } = useLocation();
@@ -38,9 +39,14 @@ export const Nav: FC = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <Button variant="ghost" className="w-full">
-              Login
-            </Button>
+            <Auth0Provider
+              domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
+              clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ""}
+            >
+              <Button variant="ghost" className="w-full">
+                Login
+              </Button>
+            </Auth0Provider>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Button className="text-white w-full">Sign Up</Button>
