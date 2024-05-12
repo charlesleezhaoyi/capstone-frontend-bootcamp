@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
-import { useMembers } from "../../hooks/useMembers";
 import { MemberCard } from "./MemberCard";
-import { Member } from "../../hooks/useMembers";
+import { useMembers, type Member } from "../../hooks/useMembers";
 
 export const NonAdminMemberView: FC = () => {
   const [npoMembers, setNpoMembers] = useState<Member[]>();
@@ -22,12 +21,13 @@ export const NonAdminMemberView: FC = () => {
     fetchMembersAsync();
   }, []);
 
+  const memberCards = npoMembers?.map((member: Member) => (
+    <MemberCard member={member} />
+  ));
+
   return (
-    <div className="bg-gray-500 w-full h-fit grid lg:gap-8 lg:p-8 md:grid-cols-3 md:gap-4 md:p-4 sm:grid-cols-2 grid-cols-1 gap-10 p-10 ">
-      <MemberCard />
-      <MemberCard />
-      <MemberCard />
-      <MemberCard />
+    <div className="bg-gray-500 w-full min-h-full h-fit grid lg:gap-8 lg:p-8 md:grid-cols-3 md:gap-4 md:p-4 sm:grid-cols-2 grid-cols-1 gap-10 p-10 ">
+      {memberCards}
     </div>
   );
 };

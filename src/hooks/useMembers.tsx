@@ -1,4 +1,10 @@
-//create interface for fetched object
+interface Role {
+  id: number;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 interface NpoMember {
   id: number;
   npo_id: number;
@@ -9,6 +15,7 @@ interface NpoMember {
   open_ended_ans_3: string | null;
   createdAt: string;
   updatedAt: string;
+  roles: Role;
 }
 
 export interface Member {
@@ -21,6 +28,7 @@ export interface Member {
   email: string;
   cv_url: string;
   portfolio_link_url: string;
+  display_img_url: string;
   is_onboarded: boolean;
   createdAt: string;
   updatedAt: string;
