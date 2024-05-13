@@ -59,7 +59,7 @@ export function GenericOnboarding() {
   });
 
   const [name, setName] = useState<string>("Your name");
-  const [email, setEmail] = useState<string>("");
+  const [userEmail, setUserEmail] = useState<string>("");
   const [individual, setIndividual] = useState<boolean>(true);
   const [corporate, setCorporate] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -86,7 +86,21 @@ export function GenericOnboarding() {
       });
     } else if (type === "corporate") {
       // Redirect to /corporate-onboarding
-      navigate("/corporate-onboarding");
+      setUserEmail(email);
+      axios
+        .post(`http://localhost:3001/members/`, { email })
+        .then((response) => {
+          if (response.status === 200) {
+            // Redirect to /individual-onboarding
+            // navigate("/individual-onboarding");
+          } else {
+            throw new Error("Failed to submit form");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      navigate("/corporate-onboarding", { state: { email } });
     }
   }
 

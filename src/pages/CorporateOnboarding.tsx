@@ -28,13 +28,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
-import { useNavigate } from "react-router";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 // Type definitions
 
 interface FormValues {
   npo_name: string;
   key_activities: string; //change to enum later
+  company_description: string;
   company_website_url: string;
   country_incorporated: string; //change to enum later
   company_size: string; //change to enum later
@@ -51,6 +54,7 @@ const accountFormSchema = z.object({
     .string()
     .min(2, { message: "Name must be at least 2 characters." })
     .max(30, { message: "Name must not be longer than 30 characters." }),
+  company_description: z.string({}),
   company_website_url: z.string().url(),
   key_activities: z.string({}),
   country_incorporated: z.string({}),
@@ -67,20 +71,12 @@ const accountFormSchema = z.object({
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
-const defaultValues: Partial<AccountFormValues> = {
-  npo_name: "GoodHub SEA",
-  key_activities: "Community Building",
-  company_website_url: "https://goodhubsea.com",
-  country_incorporated: "Singapore",
-  acra: undefined,
-  company_size: "1-10",
-};
-
 // Main component
 export function CorporateOnboarding() {
+  const location = useLocation();
+  const { email } = location.state;
   const form: UseFormReturn<AccountFormValues> = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
-    defaultValues,
   });
 
   // console.log(form.formState.errors);
@@ -88,7 +84,7 @@ export function CorporateOnboarding() {
 
   const fileRef = form.register("acra");
 
-  const navigate = useNavigate();
+  const { loginWithRedirect } = useAuth0();
 
   function onSubmit(data: AccountFormValues): void {
     const {
@@ -97,10 +93,61 @@ export function CorporateOnboarding() {
       company_website_url,
       country_incorporated,
       company_size,
+      company_description,
       acra,
     } = data;
-    // console.log(data);
-    navigate("/individual-onboarding");
+
+    async function submitForm() {
+      try {
+        await axios.post(`http://localhost:3001/npos/createNpo`, {
+          name: npo_name,
+          key_activities: key_activities,
+          company_website_url: company_website_url,
+          country_incorporated: country_incorporated,
+          company_size: company_size,
+          company_description: company_description,
+          company_logo_url: "http://insertlogo.com", //to fix
+          acra_url: "http://insertacra.com", //to fix
+          is_whitelabelled: false,
+          event_module: false,
+          discussion_module: false,
+          membership_mgmt: "premium",
+          is_verified: false,
+        });
+
+        const response = await axios.put(
+          `http://localhost:3001/members/update`,
+          {
+            email: email,
+            full_name: "Charles Lee",
+            date_of_birth: "1990-02-29",
+            gender: "male",
+            occupation: "Software Engineer",
+            employee_at: "GoodHub SEA",
+            cv_url: "https://www.linkedin.com/in/charleslee",
+            portfolio_link_url: "www.goodhubsea.com",
+            is_onboarded: true,
+          }
+        );
+
+        if (response.status !== 200) {
+          throw new Error("Failed to submit form");
+        }
+
+        console.log("Form submitted successfully", response.data);
+
+        loginWithRedirect({
+          authorizationParams: {
+            screen_hint: "signup",
+            login_hint: email,
+          },
+        });
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    submitForm();
   }
 
   return (
@@ -131,7 +178,27 @@ export function CorporateOnboarding() {
             </FormItem>
           )}
         />
-        {/*Key Activities*/}
+        {/*Company Description*/}
+        <FormField
+          control={form.control}
+          name="company_description"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Company Description</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="A story about what your company is all about"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Tell us more about what your company does, its mission & vision!
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/*Key Activities - to change SelectItem later*/}
         <FormField
           control={form.control}
           name="key_activities"
@@ -148,18 +215,14 @@ export function CorporateOnboarding() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Community Building">
-                    Community Building
+                  <SelectItem value="Social Services">
+                    Social Services
                   </SelectItem>
-                  <SelectItem value="Educational Programmes">
+                  <SelectItem value="Education">
                     Educational Programmes
                   </SelectItem>
-                  <SelectItem value="Charitable Causes">
-                    Charitable Causes
-                  </SelectItem>
-                  <SelectItem value="Direct Aid Provision">
-                    Direct Aid Provision
-                  </SelectItem>
+                  <SelectItem value="Healthcare">Healthcare</SelectItem>
+                  <SelectItem value="Environment">Environment</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>

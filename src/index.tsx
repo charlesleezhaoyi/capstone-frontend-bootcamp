@@ -16,6 +16,8 @@ root.render(
     authorizationParams={{
       redirect_uri: window.location.origin + "/events",
       audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+      scope:
+        "openid profile email read:current_user update:current_user_metadata",
     }}
   >
     <React.StrictMode>
