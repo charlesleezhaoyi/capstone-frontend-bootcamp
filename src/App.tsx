@@ -4,6 +4,8 @@ import { Nav } from "./components/nav-overlay/NavOverlay";
 import { Events } from "./pages/Events";
 import { Members } from "./pages/Members";
 import { Discussions } from "./pages/Discussions";
+import { GenericOnboarding } from "./pages/GenericOnboarding";
+import { CorporateOnboarding } from "./pages/CorporateOnboarding";
 import { IndividualOnboarding } from "./pages/IndividualOnboarding";
 
 // import AuthWrapper from "./components/auth0/AuthWrapper";
@@ -21,9 +23,14 @@ function App() {
               // </AuthWrapper>
             }
           />
+          <Route path="public-onboarding" element={<GenericOnboarding />} />
           <Route
             path="individual-onboarding"
             element={<IndividualOnboarding />}
+          />
+          <Route
+            path="corporate-onboarding"
+            element={<CorporateOnboarding />}
           />
           <Route path="members" element={<Members />} />
           <Route path="discussions" element={<Discussions />} />

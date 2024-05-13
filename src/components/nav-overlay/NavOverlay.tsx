@@ -12,10 +12,15 @@ import { Button } from "../ui/button";
 import { Menu, CircleUserRound } from "lucide-react";
 import { Auth0Provider } from "@auth0/auth0-react";
 import LoginButton from "../auth0/LoginButton";
+import { useNavigate } from "react-router-dom";
 
 export const Nav: FC = () => {
   const { pathname } = useLocation();
   const rootPath = pathname.split("/")[1];
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/public-onboarding");
+  };
 
   const mobileHeader = (
     <nav className="flex flex-row justify-between items-center md:hidden">
@@ -44,7 +49,9 @@ export const Nav: FC = () => {
               domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
               clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ""}
             >
-              <LoginButton></LoginButton>
+              <Button variant="ghost" className="w-full">
+                Login
+              </Button>
             </Auth0Provider>
           </DropdownMenuItem>
           <DropdownMenuItem>
@@ -65,7 +72,10 @@ export const Nav: FC = () => {
         >
           <LoginButton></LoginButton>
         </Auth0Provider>
-        <Button className="text-white w-full text-md rounded-lg">
+        <Button
+          className="text-white w-full text-md rounded-lg"
+          onClick={handleClick}
+        >
           Sign Up
         </Button>
       </div>

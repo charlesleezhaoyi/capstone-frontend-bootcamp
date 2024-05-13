@@ -1,5 +1,5 @@
 // TypeScript imports
-import React from "react";
+import React, { FC } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon, CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
@@ -35,6 +35,7 @@ import {
   SelectValue,
   SelectLabel,
 } from "../components/ui/select";
+import { useNavigate } from "react-router";
 
 // Type definitions
 type Gender = {
@@ -58,14 +59,9 @@ interface FormValues {
 }
 
 const accountFormSchema = z.object({
-  name: z
-    .string()
-    .min(2, { message: "Name must be at least 2 characters." })
-    .max(30, { message: "Name must not be longer than 30 characters." }),
   dob: z.date({ required_error: "A date of birth is required." }),
   genders: z.string({ required_error: "Please select a gender." }),
   company: z.string({ required_error: "Please enter a company name." }),
-  email: z.string({ required_error: "Please enter an email address." }),
   cv_url: z.string({ required_error: "Please enter a CV URL." }),
   portfolio_url: z.string({ required_error: "Please enter a portfolio URL." }),
 });
@@ -73,201 +69,155 @@ const accountFormSchema = z.object({
 type AccountFormValues = z.infer<typeof accountFormSchema>;
 
 const defaultValues: Partial<AccountFormValues> = {
-  name: "Your name",
   dob: new Date("2023-01-23"),
+  company: "John Doe Pte Ltd",
+  genders: "",
+  cv_url: "https://www.linkedin.com/in/johndoe",
+  portfolio_url: "https://www.johndoe.com",
 };
 
 // Main component
-export function IndividualOnboarding() {
+export const IndividualOnboarding: FC = () => {
   const form: UseFormReturn<AccountFormValues> = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
   });
 
-  const [name, setName] = useState<string>("Your name");
-  const [dob, setDob] = useState<Date>(new Date());
-  const [gender, setGender] = useState<string>("M");
-  const [company, setCompany] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const navigate = useNavigate();
 
   function onSubmit(data: AccountFormValues): void {
-    console.log(data);
+    const { dob, genders, company, cv_url, portfolio_url } = data;
+    navigate("/events");
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {/* Name field */}
-        {genders && (
-          <>
-            <h1 className="flex flex-col py-2 px-8">Welcome to GoodHub SEA</h1>
-            <h3 className="flex flex-col py-2 px-8">
-              We are so glad to have you with us! Tell us about yourself!
-            </h3>
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem className="flex flex-col py-2 px-8">
-                  <FormLabel>Name</FormLabel>
+        <h1 className="flex flex-col py-2 px-8">Welcome to GoodHub SEA</h1>
+        <h3 className="flex flex-col py-2 px-8">
+          We are so glad to have you with us! Tell us about yourself!
+        </h3>
+        {/* Date of Birth field */}
+        <FormField
+          control={form.control}
+          name="dob"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-1 px-8">
+              <FormLabel>Date of birth</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
                   <FormControl>
-                    <Input
-                      placeholder="Your name"
-                      {...field}
-                      onChange={(e) => setName(e.target.value)}
-                    />
+                    <Button
+                      variant="outline"
+                      className={cn("w-[240px] pl-3 text-left font-normal", {
+                        "text-muted-foreground": !field.value,
+                      })}
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
                   </FormControl>
-                  <FormDescription>
-                    This is the name that will be displayed on your profile and
-                    in emails.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {/* Date of Birth field */}
-            <FormField
-              control={form.control}
-              name="dob"
-              render={({ field }) => (
-                <FormItem className="flex flex-col py-1 px-8">
-                  <FormLabel>Date of birth</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-[240px] pl-3 text-left font-normal",
-                            {
-                              "text-muted-foreground": !field.value,
-                            }
-                          )}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP")
-                          ) : (
-                            <span>Pick a date</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => {
-                          field.onChange(date);
-                          setDob(date as Date);
-                        }}
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                  <FormDescription>
-                    Your date of birth is used to calculate your age.
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Select>
-              <SelectGroup className="flex flex-col py-1 px-8">
-                <SelectLabel>Gender</SelectLabel>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue
-                    placeholder="Gender"
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                      setGender(e.target.value)
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={(date) => {
+                      field.onChange(date);
+                    }}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
                     }
+                    initialFocus
                   />
-                </SelectTrigger>
+                </PopoverContent>
+              </Popover>
+              <FormDescription>
+                Your date of birth is used to calculate your age.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/*Gender Selection*/}
+        <FormField
+          control={form.control}
+          name="genders"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Gender</FormLabel>
+              <Select>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="What is your gender?" />
+                  </SelectTrigger>
+                </FormControl>
                 <SelectContent>
                   <SelectItem value="Male">Male</SelectItem>
                   <SelectItem value="Female">Female</SelectItem>
                 </SelectContent>
-              </SelectGroup>
-            </Select>
-            <FormField<FormValues>
-              control={form.control}
-              name="company"
-              render={({ field }) => (
-                <FormItem className="flex flex-col py-2 px-8">
-                  <FormLabel>Company</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="The company you're working at"
-                      {...field}
-                      value={
-                        field.value instanceof Date
-                          ? field.value.toISOString()
-                          : field.value
-                      }
-                      onChange={(e) => setCompany(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    This is the company you're working at
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField<FormValues>
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem className="flex flex-col py-2 px-8">
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Your email"
-                      {...field}
-                      value={
-                        field.value instanceof Date
-                          ? field.value.toISOString()
-                          : field.value
-                      }
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    This is the email you'll be using for your account. We will
-                    also reach out to you for information if you're registering
-                    your company on our platform
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <RadioGroup
-              defaultValue="option-one"
-              className="flex flex-col py-2 px-8"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="option-one" id="option-one" />
-                <Label htmlFor="option-one">
-                  I am registering a non-profit with GoodHub SEA
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="option-two" id="option-two" />
-                <Label htmlFor="option-two">
-                  I am a community member of a community on GoodHub SEA
-                </Label>
-              </div>
-            </RadioGroup>
-
-            <Button type="submit" className="font-normal text-white mx-8">
-              Next
-            </Button>
-          </>
-        )}
+              </Select>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="company"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>
+                Where are you currently working at (optional)
+              </FormLabel>
+              <FormControl>
+                <Input placeholder="GoodHub SEA" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/*Company Website URL*/}
+        <FormField
+          control={form.control}
+          name="cv_url"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Company Website URL</FormLabel>
+              <FormControl>
+                <Input placeholder="Share a link to your CV" {...field} />
+              </FormControl>
+              <FormDescription>
+                Share the link to your company website for us to find out more!
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/*Company Website URL*/}
+        <FormField
+          control={form.control}
+          name="portfolio_url"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Portfolio URL</FormLabel>
+              <FormControl>
+                <Input placeholder="The company you're working at" {...field} />
+              </FormControl>
+              <FormDescription>
+                Share the link to your portfolio for us to find out more!
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" className="font-normal text-white mx-8">
+          Submit
+        </Button>
       </form>
     </Form>
   );
-}
+};
