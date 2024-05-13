@@ -10,6 +10,7 @@ import { Button } from "../components/ui/button";
 import { Calendar } from "../components/ui/calendar";
 import { Label } from "../components/ui/label";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
+import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -83,11 +84,11 @@ export function IndividualOnboarding() {
     defaultValues,
   });
 
-  const [name, setName] = React.useState<string>("Your name");
-  const [dob, setDob] = React.useState<Date>(new Date("2023-01-23"));
-  const [gender, setGender] = React.useState<string>("M");
-  const [company, setCompany] = React.useState<string>("");
-  const [email, setEmail] = React.useState<string>("");
+  const [name, setName] = useState<string>("Your name");
+  const [dob, setDob] = useState<Date>(new Date());
+  const [gender, setGender] = useState<string>("M");
+  const [company, setCompany] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
 
   function onSubmit(data: AccountFormValues): void {
     console.log(data);
