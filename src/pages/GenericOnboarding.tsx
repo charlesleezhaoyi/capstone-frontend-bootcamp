@@ -24,6 +24,7 @@ import { Input } from "../components/ui/input";
 import WelcomeImage from "../assets/WelcomeImage.png";
 import { useNavigate } from "react-router";
 import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
 
 interface FormValues {
   name: string;
@@ -67,7 +68,22 @@ export function GenericOnboarding() {
     const { name, email, type } = data;
     if (type === "individual") {
       // Redirect to /individual-onboarding
-      loginWithRedirect({ authorizationParams: { screen_hint: "signup" } });
+      axios
+        .post(`http://localhost:3001/members/`, { email })
+        .then((response) => {
+          if (response.status === 200) {
+            // Redirect to /individual-onboarding
+            // navigate("/individual-onboarding");
+          } else {
+            throw new Error("Failed to submit form");
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      loginWithRedirect({
+        authorizationParams: { screen_hint: "signup", login_hint: email },
+      });
     } else if (type === "corporate") {
       // Redirect to /corporate-onboarding
       navigate("/corporate-onboarding");
@@ -97,7 +113,11 @@ export function GenericOnboarding() {
             <FormItem className="flex flex-col py-2 px-8">
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Email" {...field} />
+                <Input
+                  placeholder="Email"
+                  {...field}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormDescription>
                 This is the email you'll be using for your account. We will also

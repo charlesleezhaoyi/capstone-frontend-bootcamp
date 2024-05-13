@@ -90,6 +90,7 @@ export const IndividualOnboarding: FC = () => {
     navigate("/events");
   }
 
+  //Need an extra field to ask user which NPO he/she is from
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
