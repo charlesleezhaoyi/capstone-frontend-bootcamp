@@ -99,6 +99,7 @@ export function CorporateOnboarding() {
 
     async function submitForm() {
       try {
+        localStorage.setItem("npo_name", npo_name);
         await axios.post(`http://localhost:3001/npos/createNpo`, {
           name: npo_name,
           key_activities: key_activities,

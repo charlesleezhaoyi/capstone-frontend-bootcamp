@@ -64,7 +64,6 @@ export const IndividualOnboarding: FC = () => {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
   const [userEmail, setUserEmail] = React.useState<string>("");
-  const [isUserLoaded, setIsUserLoaded] = React.useState(false);
 
   const userType = localStorage.getItem("userType");
 
@@ -77,7 +76,6 @@ export const IndividualOnboarding: FC = () => {
     if (!isLoading) {
       console.log(isAuthenticated, user, isLoading);
       if (!isAuthenticated) {
-        console.log(isAuthenticated, user, isLoading);
         // If the user is not authenticated, we start the login process
       } else if (user && user.email) {
         setUserEmail(user.email);
@@ -93,10 +91,6 @@ export const IndividualOnboarding: FC = () => {
     //Need to conditionally amend submitForm function to cater for different user types
     async function submitForm() {
       try {
-        if (!isUserLoaded) {
-          console.error("User not loaded");
-          return;
-        }
         if (!isAuthenticated) {
           console.error("User is not authenticated");
           return;
@@ -106,7 +100,6 @@ export const IndividualOnboarding: FC = () => {
           form.getValues();
 
         if (user) {
-          console.log(user);
           await axios.put(`http://localhost:3001/members/update`, {
             full_name: "Charles",
             email: user.email,
@@ -118,21 +111,31 @@ export const IndividualOnboarding: FC = () => {
             portfolio_link_url: portfolio_link_url,
             is_onboarded: true,
           });
-          const member_id = await axios.post(
+          const response = await axios.post(
             `http://localhost:3001/members/retrieve`,
             {
               email: user.email,
             }
           );
-          console.log(member_id.data[0].member_id);
-
-          await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
-            npo_name: npo_name,
-            member_id: member_id,
-          });
-        } else {
-          console.error("User not found");
-          return;
+          const member_id = response.data.data;
+          if (userType === "corporate") {
+            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+              npo_name: localStorage.getItem("npo_name"),
+              member_id: member_id,
+              role_id: 1,
+            });
+            navigate("/events");
+          } else if (userType === "individual") {
+            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+              npo_name: npo_name,
+              member_id: member_id,
+              role_id: 3,
+            });
+            navigate("/events");
+          } else {
+            console.error("User not found");
+            return;
+          }
         }
       } catch (error) {
         console.error(error);
@@ -140,8 +143,6 @@ export const IndividualOnboarding: FC = () => {
     }
 
     submitForm();
-
-    // navigate("/events");
   }
 
   return (
