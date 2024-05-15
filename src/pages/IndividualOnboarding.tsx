@@ -62,23 +62,66 @@ export const IndividualOnboarding: FC = () => {
   });
 
   const navigate = useNavigate();
-  const { user, isLoading, getIdTokenClaims } = useAuth0();
-  const [idTokenClaims, setIdTokenClaims] = React.useState<any>(null);
+  const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
+  // const [idTokenClaims, setIdTokenClaims] = React.useState<any>(null);
+  const [userEmail, setUserEmail] = React.useState<string>("");
   const [isUserLoaded, setIsUserLoaded] = React.useState(false);
-  // const toast = useToast();
 
-  React.useEffect(() => {
-    const fetchIdTokenClaims = async () => {
-      const claims = await getIdTokenClaims();
-      setIdTokenClaims(claims);
-      const namespace = "http://localhost:3000";
-      console.log(claims && claims[`${namespace}user_metadata`]);
-    };
-    fetchIdTokenClaims();
-  }, [getIdTokenClaims]);
+  // Define a type for your user's metadata if it's structured
+  interface UserMetadata {
+    email: string;
+  }
+
+  // useEffect(() => {
+  //   const handleAuth = async () => {
+  //     console.log(isAuthenticated);
+
+  //     try {
+  //       const urlParams = new URLSearchParams(window.location.search);
+  //       const state = urlParams.get("state");
+
+  //       console.log(isAuthenticated);
+
+  //       if (state && !window.location.href.includes("/continue")) {
+  //         window.location.href = `http://localhost:3000/individual-onboarding/continue?state=${state}`;
+  //         return;
+  //       }
+
+  //       if (isAuthenticated) {
+  //         const claims = await getIdTokenClaims();
+  //         setIdTokenClaims(claims);
+  //         const namespace = "http://localhost:3000";
+  //         const metadata =
+  //           claims && (claims[`${namespace}/user_metadata`] as UserMetadata);
+  //         if (metadata && metadata.email) {
+  //           setUserEmail(metadata.email);
+  //           setIsUserLoaded(true);
+  //         }
+  //       } else {
+  //         console.error("User not authenticated");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error handling authentication", error);
+  //     }
+  //   };
+  //   handleAuth();
+  // }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+      console.log(isAuthenticated, user, isLoading);
+      if (!isAuthenticated) {
+        console.log(isAuthenticated, user, isLoading);
+        // If the user is not authenticated, we start the login process
+      } else if (user && user.email) {
+        setUserEmail(user.email);
+      }
+    }
+  }, [isAuthenticated, isLoading, user]);
 
   //To Fix:
   function onSubmit(data: AccountFormValues): void {
+    console.log(user);
     const { dob, genders, company, cv_url, portfolio_link_url, npo_name } =
       data;
 
@@ -88,6 +131,11 @@ export const IndividualOnboarding: FC = () => {
           console.error("User not loaded");
           return;
         }
+        if (!isAuthenticated) {
+          console.error("User is not authenticated");
+          return;
+        }
+
         const { dob, genders, company, cv_url, portfolio_link_url } =
           form.getValues();
 
