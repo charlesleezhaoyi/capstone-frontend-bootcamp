@@ -22,6 +22,8 @@ export const Events: FC = () => {
     if (user && user.email && !user.email_verified) {
       setIsLoadingPage(true);
       navigate("/individual-onboarding");
+    } else {
+      setIsLoadingPage(false);
     }
   }, [user, navigate]);
 

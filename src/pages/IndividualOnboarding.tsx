@@ -30,6 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { useToast } from "../components/ui/use-toast";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { User, useAuth0 } from "@auth0/auth0-react";
@@ -65,6 +66,7 @@ export const IndividualOnboarding: FC = () => {
   const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
   const [userEmail, setUserEmail] = React.useState<string>("");
   const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
+  const { toast } = useToast();
 
   const userType = localStorage.getItem("userType");
 
@@ -103,8 +105,15 @@ export const IndividualOnboarding: FC = () => {
   };
 
   const sendVerificationEmail = async (user: User | undefined) => {
+    console.log("Sending verification email to user", user);
+
     if (!user) {
       throw new Error("User is not authenticated");
+    }
+
+    if (user.email_verified) {
+      console.log("User is already verified");
+      return;
     }
 
     const url = process.env.REACT_APP_AUTH0_EMAIL_ENDPOINT_URL;
@@ -114,11 +123,16 @@ export const IndividualOnboarding: FC = () => {
 
     try {
       const token = await requestAuth0ExplorerToken();
+      if (!token || !token.access_token) {
+        throw new Error("Token or access token is not defined");
+      }
 
       let data = JSON.stringify({
         user_id: user.sub,
         client_id: process.env.REACT_APP_AUTH0_API_EXPLORER_CLIENT_ID,
       });
+
+      console.log(token.access_token, data);
 
       await axios.post(url, data, {
         headers: {
@@ -194,13 +208,11 @@ export const IndividualOnboarding: FC = () => {
     }
 
     if (!user.email_verified) {
-      sendVerificationEmail(user)
-        .then(() => {
-          setSentVerifyEmail(true);
-        })
-        .catch((error) => {
-          console.error("Error sending verification email:", error);
-        });
+      console.log("sending toast");
+      toast({
+        title: "Please verify your email",
+        description: "You need to verify your email before you can proceed",
+      });
     } else {
       submitForm(
         user,
@@ -373,8 +385,14 @@ export const IndividualOnboarding: FC = () => {
             />
           </>
         )}
-        <Button type="submit" className="font-normal text-white mx-8">
-          {user && user.email_verified ? "Submit" : "Verify Email"}
+        <Button
+          onClick={() => sendVerificationEmail(user)}
+          className="font-normal text-white mx-8"
+        >
+          Verify Email
+        </Button>
+        <Button type="submit" className="font-normal text-white mx-4">
+          Submit
         </Button>
       </form>
     </Form>
