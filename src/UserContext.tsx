@@ -12,6 +12,10 @@ interface UserContextType {
   logoutUserContext: () => void;
 }
 
+interface UserProviderProps {
+  children: ReactNode;
+}
+
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const useUser = () => {
@@ -21,10 +25,6 @@ export const useUser = () => {
   }
   return context;
 };
-
-interface UserProviderProps {
-  children: ReactNode;
-}
 
 export const UserProvider: FunctionComponent<UserProviderProps> = ({
   children,
