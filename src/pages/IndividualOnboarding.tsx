@@ -32,7 +32,7 @@ import {
 } from "../components/ui/select";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
+import { User, useAuth0 } from "@auth0/auth0-react";
 
 const accountFormSchema = z.object({
   dob: z.date({ required_error: "A date of birth is required." }),
@@ -64,13 +64,9 @@ export const IndividualOnboarding: FC = () => {
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
   const [userEmail, setUserEmail] = React.useState<string>("");
+  const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
 
   const userType = localStorage.getItem("userType");
-
-  // Define a type for your user's metadata if it's structured
-  interface UserMetadata {
-    email: string;
-  }
 
   useEffect(() => {
     if (!isLoading) {
@@ -83,66 +79,144 @@ export const IndividualOnboarding: FC = () => {
     }
   }, [isAuthenticated, isLoading, user]);
 
+  const requestAuth0ExplorerToken = async () => {
+    try {
+      const response = await axios.post(
+        process.env.REACT_APP_AUTH0_ENDPOINT_URL ?? "",
+        {
+          client_id: process.env.REACT_APP_AUTH0_API_EXPLORER_CLIENT_ID,
+          client_secret: process.env.REACT_APP_AUTH0_API_CLIENT_SECRET,
+          audience: process.env.REACT_APP_AUTH0_API_EXPLORER_AUDIENCE,
+          grant_type: "client_credentials",
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("token retrieved", response);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const sendVerificationEmail = async (user: User | undefined) => {
+    if (!user) {
+      throw new Error("User is not authenticated");
+    }
+
+    const url = process.env.REACT_APP_AUTH0_EMAIL_ENDPOINT_URL;
+    if (!url) {
+      throw new Error("REACT_APP_AUTH0_EMAIL_ENDPOINT_URL is not defined");
+    }
+
+    try {
+      const token = await requestAuth0ExplorerToken();
+
+      let data = JSON.stringify({
+        user_id: user.sub,
+        client_id: process.env.REACT_APP_AUTH0_API_EXPLORER_CLIENT_ID,
+      });
+
+      await axios.post(url, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token.access_token}`,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const submitForm = async (
+    user: User | undefined,
+    dob: Date,
+    genders: string,
+    company: string,
+    cv_url: string,
+    portfolio_link_url: string,
+    userType: string,
+    npo_name: string | undefined
+  ) => {
+    try {
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      await axios.put(`http://localhost:3001/members/update`, {
+        full_name: "Charles",
+        email: user.email,
+        date_of_birth: dob,
+        gender: genders,
+        occupation: "",
+        employee_at: company,
+        cv_url: cv_url,
+        portfolio_link_url: portfolio_link_url,
+        is_onboarded: true,
+      });
+      const response = await axios.post(
+        `http://localhost:3001/members/retrieve`,
+        {
+          email: user.email,
+        }
+      );
+      const member_id = response.data.data;
+      if (userType === "corporate") {
+        await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+          npo_name: localStorage.getItem("npo_name"),
+          member_id: member_id,
+          role_id: 1,
+        });
+      } else if (userType === "individual") {
+        await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+          npo_name: npo_name,
+          member_id: member_id,
+          role_id: 3,
+        });
+      } else {
+        throw new Error("User not found");
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   function onSubmit(data: AccountFormValues): void {
-    console.log(user);
     const { dob, genders, company, cv_url, portfolio_link_url, npo_name } =
       data;
 
-    //Need to conditionally amend submitForm function to cater for different user types
-    async function submitForm() {
-      try {
-        if (!isAuthenticated) {
-          console.error("User is not authenticated");
-          return;
-        }
-
-        const { dob, genders, company, cv_url, portfolio_link_url } =
-          form.getValues();
-
-        if (user) {
-          await axios.put(`http://localhost:3001/members/update`, {
-            full_name: "Charles",
-            email: user.email,
-            date_of_birth: dob,
-            gender: genders,
-            occupation: "",
-            employee_at: company,
-            cv_url: cv_url,
-            portfolio_link_url: portfolio_link_url,
-            is_onboarded: true,
-          });
-          const response = await axios.post(
-            `http://localhost:3001/members/retrieve`,
-            {
-              email: user.email,
-            }
-          );
-          const member_id = response.data.data;
-          if (userType === "corporate") {
-            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
-              npo_name: localStorage.getItem("npo_name"),
-              member_id: member_id,
-              role_id: 1,
-            });
-            navigate("/events");
-          } else if (userType === "individual") {
-            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
-              npo_name: npo_name,
-              member_id: member_id,
-              role_id: 3,
-            });
-            navigate("/events");
-          } else {
-            console.error("User not found");
-            return;
-          }
-        }
-      } catch (error) {
-        console.error(error);
-      }
+    if (!user) {
+      throw new Error("User is not authenticated");
     }
 
-    submitForm();
+    if (!user.email_verified) {
+      sendVerificationEmail(user)
+        .then(() => {
+          setSentVerifyEmail(true);
+        })
+        .catch((error) => {
+          console.error("Error sending verification email:", error);
+        });
+    } else {
+      submitForm(
+        user,
+        dob,
+        genders,
+        company,
+        cv_url,
+        portfolio_link_url,
+        userType ?? "",
+        npo_name
+      )
+        .then(() => {
+          navigate("/events");
+        })
+        .catch((error) => console.error(error));
+    }
   }
 
   return (
@@ -300,7 +374,7 @@ export const IndividualOnboarding: FC = () => {
           </>
         )}
         <Button type="submit" className="font-normal text-white mx-8">
-          Submit
+          {user && user.email_verified ? "Submit" : "Verify Email"}
         </Button>
       </form>
     </Form>
