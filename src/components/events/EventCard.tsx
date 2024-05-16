@@ -1,6 +1,6 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
 import { PartyPopper } from "lucide-react";
-import { ElementType } from "react";
+import { Event } from "@/src/hooks/useEvents";
 import {
   Card,
   CardHeader,
@@ -16,15 +16,37 @@ const defaultEventImage = (
   </div>
 );
 
-export const EventCard: FC = () => {
+interface EventProps {
+  event: Event;
+}
+
+export const EventCard: FC<EventProps> = (props) => {
+  const {
+    event_overview,
+    event_name,
+    event_photo_url,
+    date,
+    time,
+    location,
+    price,
+  } = props.event;
   const [eventImageElement, setEventImageElement] = useState<
     ReactNode | undefined
   >(defaultEventImage);
 
+  const setEventImageToDefault = () => {
+    setEventImageElement(defaultEventImage);
+  };
+
   const loadEventImageElement = () => {
-    const imageCondition = false;
-    if (imageCondition) {
-      setEventImageElement(<div>real image</div>);
+    if (event_photo_url) {
+      setEventImageElement(
+        <img
+          src={event_photo_url}
+          alt="event banner"
+          onError={setEventImageToDefault}
+        />
+      );
     }
   };
 
@@ -33,17 +55,21 @@ export const EventCard: FC = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Event Name</CardTitle>
-        <CardDescription>Description</CardDescription>
+        <CardTitle>{event_name}</CardTitle>
+        <CardDescription>{event_overview}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-col ">
         {eventImageElement}
-        <div className="mt-3">When:</div>
-        <div className="mt-3">Where:</div>
-        <div className="mt-3">Fee:</div>
+        <div className="mt-3">
+          When: {new Date(date).toLocaleDateString() + " " + time}
+        </div>
+        <div className="mt-3">Where: {location}</div>
+        <div className="mt-3">Fee: ${price}</div>
       </CardContent>
       <CardFooter>
-        <div className="text-right w-full border-t-2 pt-6">Footer</div>
+        <div className="text-right w-full border-t-2 pt-6">
+          Coming: 10 Tentative: 2
+        </div>
       </CardFooter>
     </Card>
   );

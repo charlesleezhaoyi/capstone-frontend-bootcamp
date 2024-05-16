@@ -1,8 +1,27 @@
-import React, { FC } from "react";
+import React, { FC, useState, useEffect } from "react";
+import { Event, useEvents } from "../../hooks/useEvents";
 import { EventCard } from "./EventCard";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "../ui/tabs";
 
 export const MyEvents: FC = () => {
+  const [events, setEvents] = useState<Event[]>();
+  const { fetchEventsByNpoId } = useEvents();
+
+  const fetchEventsAsync = async () => {
+    try {
+      const fetchedEvents = await fetchEventsByNpoId(1);
+      setEvents(fetchedEvents);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchEventsAsync();
+  }, []);
+
+  const eventCards = events?.map((event: Event) => <EventCard event={event} />);
+
   return (
     <Tabs defaultValue="upcoming">
       <TabsList className="bg-white border-t-2 border-secondary p-3 h-fit w-full rounded-none justify-start">
@@ -20,14 +39,17 @@ export const MyEvents: FC = () => {
           <h5>Past Events</h5>
         </TabsTrigger>
       </TabsList>
-      <div className="grid lg:gap-8 lg:p-8 md:grid-cols-2 md:gap-4 md:p-4 grid-cols-1 gap-10 p-10">
-        <TabsContent value="upcoming" className="mt-0">
-          <EventCard />
-        </TabsContent>
-        <TabsContent value="past" className="mt-0">
-          <EventCard />
-        </TabsContent>
-      </div>
+
+      <TabsContent value="upcoming" className="mt-0">
+        <div className="grid lg:gap-8 lg:p-8 lg:grid-cols-3 md:gap-4 md:p-4 md:grid-cols-2 grid-cols-1 gap-10 p-10">
+          {eventCards}
+        </div>
+      </TabsContent>
+      <TabsContent value="past" className="mt-0">
+        <div className="grid lg:gap-8 lg:p-8 lg:grid-cols-3 md:gap-4 md:p-4 md:grid-cols-2 grid-cols-1 gap-10 p-10">
+          {eventCards}
+        </div>
+      </TabsContent>
     </Tabs>
   );
 };
