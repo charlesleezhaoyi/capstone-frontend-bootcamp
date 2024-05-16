@@ -62,37 +62,44 @@ export const IndividualOnboarding: FC = () => {
   });
 
   const navigate = useNavigate();
-  const { user, isLoading, getIdTokenClaims } = useAuth0();
-  const [idTokenClaims, setIdTokenClaims] = React.useState<any>(null);
-  const [isUserLoaded, setIsUserLoaded] = React.useState(false);
-  // const toast = useToast();
+  const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
+  const [userEmail, setUserEmail] = React.useState<string>("");
 
-  React.useEffect(() => {
-    const fetchIdTokenClaims = async () => {
-      const claims = await getIdTokenClaims();
-      setIdTokenClaims(claims);
-      const namespace = "http://localhost:3000";
-      console.log(claims && claims[`${namespace}user_metadata`]);
-    };
-    fetchIdTokenClaims();
-  }, [getIdTokenClaims]);
+  const userType = localStorage.getItem("userType");
 
-  //To Fix:
+  // Define a type for your user's metadata if it's structured
+  interface UserMetadata {
+    email: string;
+  }
+
+  useEffect(() => {
+    if (!isLoading) {
+      console.log(isAuthenticated, user, isLoading);
+      if (!isAuthenticated) {
+        // If the user is not authenticated, we start the login process
+      } else if (user && user.email) {
+        setUserEmail(user.email);
+      }
+    }
+  }, [isAuthenticated, isLoading, user]);
+
   function onSubmit(data: AccountFormValues): void {
+    console.log(user);
     const { dob, genders, company, cv_url, portfolio_link_url, npo_name } =
       data;
 
+    //Need to conditionally amend submitForm function to cater for different user types
     async function submitForm() {
       try {
-        if (!isUserLoaded) {
-          console.error("User not loaded");
+        if (!isAuthenticated) {
+          console.error("User is not authenticated");
           return;
         }
+
         const { dob, genders, company, cv_url, portfolio_link_url } =
           form.getValues();
 
         if (user) {
-          console.log(user);
           await axios.put(`http://localhost:3001/members/update`, {
             full_name: "Charles",
             email: user.email,
@@ -104,21 +111,31 @@ export const IndividualOnboarding: FC = () => {
             portfolio_link_url: portfolio_link_url,
             is_onboarded: true,
           });
-          const member_id = await axios.post(
+          const response = await axios.post(
             `http://localhost:3001/members/retrieve`,
             {
               email: user.email,
             }
           );
-          console.log(member_id.data[0].member_id);
-
-          await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
-            npo_name: npo_name,
-            member_id: member_id,
-          });
-        } else {
-          console.error("User not found");
-          return;
+          const member_id = response.data.data;
+          if (userType === "corporate") {
+            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+              npo_name: localStorage.getItem("npo_name"),
+              member_id: member_id,
+              role_id: 1,
+            });
+            navigate("/events");
+          } else if (userType === "individual") {
+            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+              npo_name: npo_name,
+              member_id: member_id,
+              role_id: 3,
+            });
+            navigate("/events");
+          } else {
+            console.error("User not found");
+            return;
+          }
         }
       } catch (error) {
         console.error(error);
@@ -126,8 +143,6 @@ export const IndividualOnboarding: FC = () => {
     }
 
     submitForm();
-
-    // navigate("/events");
   }
 
   return (
@@ -206,80 +221,84 @@ export const IndividualOnboarding: FC = () => {
           )}
         />
         {/*To prepopulate using dropdown in future*/}
-        <FormField
-          control={form.control}
-          name="npo_name"
-          render={({ field }) => (
-            <FormItem className="flex flex-col py-2 px-8">
-              <FormLabel>
-                What is the name of the NPO you'd like to join
-              </FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Type the name of the NPO you'd like to join (case sensitive & spelling sensitive)"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Your request to join the community will be sent to the admin and
-                you'll be notified once you're in!
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="company"
-          render={({ field }) => (
-            <FormItem className="flex flex-col py-2 px-8">
-              <FormLabel>
-                Where are you currently working at (optional)
-              </FormLabel>
-              <FormControl>
-                <Input placeholder="GoodHub SEA" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/*Company Website URL*/}
-        <FormField
-          control={form.control}
-          name="cv_url"
-          render={({ field }) => (
-            <FormItem className="flex flex-col py-2 px-8">
-              <FormLabel>CV URL</FormLabel>
-              <FormControl>
-                <Input placeholder="Share a link to your CV" {...field} />
-              </FormControl>
-              <FormDescription>
-                Share the link to your CV for us to find out more about you!
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {/*Company Website URL*/}
-        <FormField
-          control={form.control}
-          name="portfolio_link_url"
-          render={({ field }) => (
-            <FormItem className="flex flex-col py-2 px-8">
-              <FormLabel>Portfolio URL</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Tell us a little more about what you have done outside of work"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Share the link to your portfolio for us to find out more!
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {userType === "individual" && (
+          <>
+            <FormField
+              control={form.control}
+              name="npo_name"
+              render={({ field }) => (
+                <FormItem className="flex flex-col py-2 px-8">
+                  <FormLabel>
+                    What is the name of the NPO you'd like to join
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Type the name of the NPO you'd like to join (case sensitive & spelling sensitive)"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Your request to join the community will be sent to the admin
+                    and you'll be notified once you're in!
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="company"
+              render={({ field }) => (
+                <FormItem className="flex flex-col py-2 px-8">
+                  <FormLabel>
+                    Where are you currently working at (optional)
+                  </FormLabel>
+                  <FormControl>
+                    <Input placeholder="GoodHub SEA" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/*Company Website URL*/}
+            <FormField
+              control={form.control}
+              name="cv_url"
+              render={({ field }) => (
+                <FormItem className="flex flex-col py-2 px-8">
+                  <FormLabel>CV URL</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Share a link to your CV" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    Share the link to your CV for us to find out more about you!
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/*Company Website URL*/}
+            <FormField
+              control={form.control}
+              name="portfolio_link_url"
+              render={({ field }) => (
+                <FormItem className="flex flex-col py-2 px-8">
+                  <FormLabel>Portfolio URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Tell us a little more about what you have done outside of work"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Share the link to your portfolio for us to find out more!
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
         <Button type="submit" className="font-normal text-white mx-8">
           Submit
         </Button>

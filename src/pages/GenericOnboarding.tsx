@@ -68,6 +68,7 @@ export function GenericOnboarding() {
     const { name, email, type } = data;
     if (type === "individual") {
       // Redirect to /individual-onboarding
+      localStorage.setItem("userType", "individual");
       axios
         .post(`http://localhost:3001/members/`, { email })
         .then((response) => {
@@ -86,6 +87,7 @@ export function GenericOnboarding() {
       });
     } else if (type === "corporate") {
       // Redirect to /corporate-onboarding
+      localStorage.setItem("userType", "corporate");
       setUserEmail(email);
       axios
         .post(`http://localhost:3001/members/`, { email })

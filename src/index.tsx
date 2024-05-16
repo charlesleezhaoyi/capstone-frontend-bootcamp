@@ -4,25 +4,27 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Auth0Provider } from "@auth0/auth0-react";
-import { BrowserRouter, Route } from "react-router-dom";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <Auth0Provider
-    domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
-    clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ""}
+    domain={process.env.REACT_APP_AUTH0_DOMAIN!}
+    clientId={process.env.REACT_APP_AUTH0_CLIENT_ID!}
     authorizationParams={{
-      redirect_uri: window.location.origin + "/events",
-      audience: process.env.REACT_APP_AUTH0_AUDIENCE,
+      redirect_uri: "http://localhost:3000/events",
+      audience: process.env.REACT_APP_AUTH0_AUDIENCE!,
       scope:
         "openid profile email read:current_user update:current_user_metadata",
     }}
+    // redirect_uri= "http://localhost:3000/events" // Remove this line
+    // useRefreshTokens={true}
+    // cacheLocation="localstorage"
   >
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    {/* <React.StrictMode> */}
+    <App />
+    {/* </React.StrictMode> */}
   </Auth0Provider>
 );
 

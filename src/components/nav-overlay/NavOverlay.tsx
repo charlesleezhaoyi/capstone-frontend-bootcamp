@@ -45,14 +45,7 @@ export const Nav: FC = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <Auth0Provider
-              domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
-              clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ""}
-            >
-              <Button variant="ghost" className="w-full">
-                Login
-              </Button>
-            </Auth0Provider>
+            <LoginButton></LoginButton>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Button className="text-white w-full">Sign Up</Button>
@@ -66,12 +59,7 @@ export const Nav: FC = () => {
     <nav className="hidden md:flex flex-row justify-between items-center px-5">
       <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
       <div className="flex flex-row">
-        <Auth0Provider
-          domain={process.env.REACT_APP_AUTH0_DOMAIN ?? ""}
-          clientId={process.env.REACT_APP_AUTH0_CLIENT_ID ?? ""}
-        >
-          <LoginButton></LoginButton>
-        </Auth0Provider>
+        <LoginButton></LoginButton>
         <Button
           className="text-white w-full text-md rounded-lg"
           onClick={handleClick}

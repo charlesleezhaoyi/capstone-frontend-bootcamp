@@ -7,7 +7,7 @@ import { Discussions } from "./pages/Discussions";
 import { GenericOnboarding } from "./pages/GenericOnboarding";
 import { CorporateOnboarding } from "./pages/CorporateOnboarding";
 import { IndividualOnboarding } from "./pages/IndividualOnboarding";
-import { useContext } from 'react';
+import { useContext } from "react";
 // import AuthWrapper from "./components/auth0/AuthWrapper";
 
 function App() {
@@ -25,9 +25,13 @@ function App() {
           />
           <Route path="public-onboarding" element={<GenericOnboarding />} />
           <Route
-            path="individual-onboarding"
+            path="/individual-onboarding"
             element={<IndividualOnboarding />}
           />
+          {/* <Route
+            path="/individual-onboarding/continue"
+            element={<IndividualOnboarding />}
+          /> */}
           <Route
             path="corporate-onboarding"
             element={<CorporateOnboarding />}
