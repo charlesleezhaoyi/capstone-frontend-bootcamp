@@ -34,8 +34,10 @@ import { useToast } from "../components/ui/use-toast";
 import { useNavigate } from "react-router";
 import axios from "axios";
 import { User, useAuth0 } from "@auth0/auth0-react";
+import VerifyEmailButton from "../components/auth0/VerifyEmailButton";
 
 const accountFormSchema = z.object({
+  full_name: z.string({ required_error: "A name is required." }),
   dob: z.date({ required_error: "A date of birth is required." }),
   genders: z.string({ required_error: "Please select a gender." }),
   company: z.string({ required_error: "Please enter a company name." }),
@@ -53,6 +55,7 @@ export const IndividualOnboarding: FC = () => {
   const form: UseFormReturn<AccountFormValues> = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
+      full_name: "",
       dob: new Date(),
       genders: "",
       company: "",
@@ -60,6 +63,9 @@ export const IndividualOnboarding: FC = () => {
       portfolio_link_url: "",
       npo_name: "",
     },
+    mode: "all",
+    criteriaMode: "all",
+    reValidateMode: "onChange",
   });
 
   const navigate = useNavigate();
@@ -67,6 +73,9 @@ export const IndividualOnboarding: FC = () => {
   const [userEmail, setUserEmail] = React.useState<string>("");
   const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
   const { toast } = useToast();
+  const [formData, setFormData] = React.useState<AccountFormValues | null>(
+    null
+  );
 
   const userType = localStorage.getItem("userType");
 
@@ -81,73 +90,8 @@ export const IndividualOnboarding: FC = () => {
     }
   }, [isAuthenticated, isLoading, user]);
 
-  const requestAuth0ExplorerToken = async () => {
-    try {
-      const response = await axios.post(
-        process.env.REACT_APP_AUTH0_ENDPOINT_URL ?? "",
-        {
-          client_id: process.env.REACT_APP_AUTH0_API_EXPLORER_CLIENT_ID,
-          client_secret: process.env.REACT_APP_AUTH0_API_CLIENT_SECRET,
-          audience: process.env.REACT_APP_AUTH0_API_EXPLORER_AUDIENCE,
-          grant_type: "client_credentials",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("token retrieved", response);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const sendVerificationEmail = async (user: User | undefined) => {
-    console.log("Sending verification email to user", user);
-
-    if (!user) {
-      throw new Error("User is not authenticated");
-    }
-
-    if (user.email_verified) {
-      console.log("User is already verified");
-      return;
-    }
-
-    const url = process.env.REACT_APP_AUTH0_EMAIL_ENDPOINT_URL;
-    if (!url) {
-      throw new Error("REACT_APP_AUTH0_EMAIL_ENDPOINT_URL is not defined");
-    }
-
-    try {
-      const token = await requestAuth0ExplorerToken();
-      if (!token || !token.access_token) {
-        throw new Error("Token or access token is not defined");
-      }
-
-      let data = JSON.stringify({
-        user_id: user.sub,
-        client_id: process.env.REACT_APP_AUTH0_API_EXPLORER_CLIENT_ID,
-      });
-
-      console.log(token.access_token, data);
-
-      await axios.post(url, data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token.access_token}`,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
-
   const submitForm = async (
-    user: User | undefined,
+    full_name: string,
     dob: Date,
     genders: string,
     company: string,
@@ -161,8 +105,16 @@ export const IndividualOnboarding: FC = () => {
         throw new Error("User not found");
       }
 
+      if (!user.email_verified) {
+        console.log("sending toast");
+        toast({
+          title: "Please verify your email",
+          description: "You need to verify your email before you can proceed",
+        });
+      }
+
       await axios.put(`http://localhost:3001/members/update`, {
-        full_name: "Charles",
+        full_name: full_name,
         email: user.email,
         date_of_birth: dob,
         gender: genders,
@@ -199,23 +151,30 @@ export const IndividualOnboarding: FC = () => {
     }
   };
 
-  function onSubmit(data: AccountFormValues): void {
-    const { dob, genders, company, cv_url, portfolio_link_url, npo_name } =
-      data;
-
-    if (!user) {
-      throw new Error("User is not authenticated");
-    }
-
-    if (!user.email_verified) {
-      console.log("sending toast");
-      toast({
-        title: "Please verify your email",
-        description: "You need to verify your email before you can proceed",
-      });
-    } else {
-      submitForm(
-        user,
+  async function onSubmit(data: AccountFormValues): Promise<void> {
+    const {
+      full_name,
+      dob,
+      genders,
+      company,
+      cv_url,
+      portfolio_link_url,
+      npo_name,
+    } = data;
+    try {
+      if (!user) {
+        throw new Error("User is not authenticated");
+      }
+      // if (!form.formState.isValid) {
+      //   toast({
+      //     title: "Form validation error",
+      //     description:
+      //       "Please fill out all required fields correctly before submitting the form.",
+      //   });
+      //   return;
+      // }
+      await submitForm(
+        full_name,
         dob,
         genders,
         company,
@@ -223,11 +182,16 @@ export const IndividualOnboarding: FC = () => {
         portfolio_link_url,
         userType ?? "",
         npo_name
-      )
-        .then(() => {
-          navigate("/events");
-        })
-        .catch((error) => console.error(error));
+      );
+      navigate("/events");
+    } catch (error) {
+      // Handle the error
+      console.error(error);
+      toast({
+        title: "Submission error",
+        description:
+          "An error occurred while submitting the form. Please try again.",
+      });
     }
   }
 
@@ -239,6 +203,22 @@ export const IndividualOnboarding: FC = () => {
         <h3 className="flex flex-col py-2 px-8">
           We are so glad to have you with us! Tell us about yourself!
         </h3>
+        <FormField
+          control={form.control}
+          name="full_name"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="What is your full name?" {...field} />
+              </FormControl>
+              <FormDescription>
+                Share with us how best to address you!
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* Date of Birth field */}
         <FormField
           control={form.control}
@@ -385,13 +365,14 @@ export const IndividualOnboarding: FC = () => {
             />
           </>
         )}
+        <VerifyEmailButton
+          disabled={!form.formState.isValid}
+        ></VerifyEmailButton>
         <Button
-          onClick={() => sendVerificationEmail(user)}
+          type="submit"
           className="font-normal text-white mx-8"
+          disabled={!form.formState.isValid}
         >
-          Verify Email
-        </Button>
-        <Button type="submit" className="font-normal text-white mx-4">
           Submit
         </Button>
       </form>

@@ -40,7 +40,12 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
     user,
     getAccessTokenSilently,
     loginUserContext,
+    navigate,
   ]);
+
+  if (isLoadingPage) {
+    return <h1>Loading...</h1>;
+  }
 
   return isAuthenticated ? children : null;
 };

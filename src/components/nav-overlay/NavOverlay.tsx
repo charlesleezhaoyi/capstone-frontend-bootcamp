@@ -10,7 +10,6 @@ import {
 import { Sheet, SheetTrigger, SheetContent } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Menu, CircleUserRound } from "lucide-react";
-import { Auth0Provider } from "@auth0/auth0-react";
 import LoginButton from "../auth0/LoginButton";
 import { useNavigate } from "react-router-dom";
 
