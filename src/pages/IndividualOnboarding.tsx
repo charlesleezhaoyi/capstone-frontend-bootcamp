@@ -30,11 +30,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { useToast } from "../components/ui/use-toast";
 import { useNavigate } from "react-router";
 import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
+import { User, useAuth0 } from "@auth0/auth0-react";
+import VerifyEmailButton from "../components/auth0/VerifyEmailButton";
 
 const accountFormSchema = z.object({
+  full_name: z.string({ required_error: "A name is required." }),
   dob: z.date({ required_error: "A date of birth is required." }),
   genders: z.string({ required_error: "Please select a gender." }),
   company: z.string({ required_error: "Please enter a company name." }),
@@ -52,6 +55,7 @@ export const IndividualOnboarding: FC = () => {
   const form: UseFormReturn<AccountFormValues> = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues: {
+      full_name: "",
       dob: new Date(),
       genders: "",
       company: "",
@@ -59,18 +63,21 @@ export const IndividualOnboarding: FC = () => {
       portfolio_link_url: "",
       npo_name: "",
     },
+    mode: "all",
+    criteriaMode: "all",
+    reValidateMode: "onChange",
   });
 
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
   const [userEmail, setUserEmail] = React.useState<string>("");
+  const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
+  const { toast } = useToast();
+  const [formData, setFormData] = React.useState<AccountFormValues | null>(
+    null
+  );
 
   const userType = localStorage.getItem("userType");
-
-  // Define a type for your user's metadata if it's structured
-  interface UserMetadata {
-    email: string;
-  }
 
   useEffect(() => {
     if (!isLoading) {
@@ -83,66 +90,109 @@ export const IndividualOnboarding: FC = () => {
     }
   }, [isAuthenticated, isLoading, user]);
 
-  function onSubmit(data: AccountFormValues): void {
-    console.log(user);
-    const { dob, genders, company, cv_url, portfolio_link_url, npo_name } =
-      data;
-
-    //Need to conditionally amend submitForm function to cater for different user types
-    async function submitForm() {
-      try {
-        if (!isAuthenticated) {
-          console.error("User is not authenticated");
-          return;
-        }
-
-        const { dob, genders, company, cv_url, portfolio_link_url } =
-          form.getValues();
-
-        if (user) {
-          await axios.put(`http://localhost:3001/members/update`, {
-            full_name: "Charles",
-            email: user.email,
-            date_of_birth: dob,
-            gender: genders,
-            occupation: "",
-            employee_at: company,
-            cv_url: cv_url,
-            portfolio_link_url: portfolio_link_url,
-            is_onboarded: true,
-          });
-          const response = await axios.post(
-            `http://localhost:3001/members/retrieve`,
-            {
-              email: user.email,
-            }
-          );
-          const member_id = response.data.data;
-          if (userType === "corporate") {
-            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
-              npo_name: localStorage.getItem("npo_name"),
-              member_id: member_id,
-              role_id: 1,
-            });
-            navigate("/events");
-          } else if (userType === "individual") {
-            await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
-              npo_name: npo_name,
-              member_id: member_id,
-              role_id: 3,
-            });
-            navigate("/events");
-          } else {
-            console.error("User not found");
-            return;
-          }
-        }
-      } catch (error) {
-        console.error(error);
+  const submitForm = async (
+    full_name: string,
+    dob: Date,
+    genders: string,
+    company: string,
+    cv_url: string,
+    portfolio_link_url: string,
+    userType: string,
+    npo_name: string | undefined
+  ) => {
+    try {
+      if (!user) {
+        throw new Error("User not found");
       }
-    }
 
-    submitForm();
+      if (!user.email_verified) {
+        console.log("sending toast");
+        toast({
+          title: "Please verify your email",
+          description: "You need to verify your email before you can proceed",
+        });
+      }
+
+      await axios.put(`http://localhost:3001/members/update`, {
+        full_name: full_name,
+        email: user.email,
+        date_of_birth: dob,
+        gender: genders,
+        occupation: "",
+        employee_at: company,
+        cv_url: cv_url,
+        portfolio_link_url: portfolio_link_url,
+        is_onboarded: true,
+      });
+      const response = await axios.post(
+        `http://localhost:3001/members/retrieve`,
+        {
+          email: user.email,
+        }
+      );
+      const member_id = response.data.data;
+      if (userType === "corporate") {
+        await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+          npo_name: localStorage.getItem("npo_name"),
+          member_id: member_id,
+          role_id: 1,
+        });
+      } else if (userType === "individual") {
+        await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
+          npo_name: npo_name,
+          member_id: member_id,
+          role_id: 3,
+        });
+      } else {
+        throw new Error("User not found");
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  async function onSubmit(data: AccountFormValues): Promise<void> {
+    const {
+      full_name,
+      dob,
+      genders,
+      company,
+      cv_url,
+      portfolio_link_url,
+      npo_name,
+    } = data;
+    try {
+      if (!user) {
+        throw new Error("User is not authenticated");
+      }
+      // if (!form.formState.isValid) {
+      //   toast({
+      //     title: "Form validation error",
+      //     description:
+      //       "Please fill out all required fields correctly before submitting the form.",
+      //   });
+      //   return;
+      // }
+      await submitForm(
+        full_name,
+        dob,
+        genders,
+        company,
+        cv_url,
+        portfolio_link_url,
+        userType ?? "",
+        npo_name
+      );
+      navigate("/events");
+    } catch (error) {
+      // Handle the error
+      console.error(error);
+      toast({
+        title: "Submission error",
+        description:
+          "An error occurred while submitting the form. Please try again.",
+      });
+    }
   }
 
   return (
@@ -153,6 +203,22 @@ export const IndividualOnboarding: FC = () => {
         <h3 className="flex flex-col py-2 px-8">
           We are so glad to have you with us! Tell us about yourself!
         </h3>
+        <FormField
+          control={form.control}
+          name="full_name"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="What is your full name?" {...field} />
+              </FormControl>
+              <FormDescription>
+                Share with us how best to address you!
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* Date of Birth field */}
         <FormField
           control={form.control}
@@ -299,7 +365,14 @@ export const IndividualOnboarding: FC = () => {
             />
           </>
         )}
-        <Button type="submit" className="font-normal text-white mx-8">
+        <VerifyEmailButton
+          disabled={!form.formState.isValid}
+        ></VerifyEmailButton>
+        <Button
+          type="submit"
+          className="font-normal text-white mx-8"
+          disabled={!form.formState.isValid}
+        >
           Submit
         </Button>
       </form>

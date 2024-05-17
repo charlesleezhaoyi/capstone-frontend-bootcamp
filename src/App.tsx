@@ -8,7 +8,7 @@ import { GenericOnboarding } from "./pages/GenericOnboarding";
 import { CorporateOnboarding } from "./pages/CorporateOnboarding";
 import { IndividualOnboarding } from "./pages/IndividualOnboarding";
 import { useContext } from "react";
-// import AuthWrapper from "./components/auth0/AuthWrapper";
+import AuthWrapper from "./components/auth0/AuthWrapper";
 
 function App() {
   return (
@@ -18,9 +18,9 @@ function App() {
           <Route
             path="events"
             element={
-              // <AuthWrapper>
-              <Events />
-              // </AuthWrapper>
+              <AuthWrapper>
+                <Events />
+              </AuthWrapper>
             }
           />
           <Route path="public-onboarding" element={<GenericOnboarding />} />

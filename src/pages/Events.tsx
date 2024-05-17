@@ -14,7 +14,7 @@ import {
 const isUserLoggedIn = true;
 
 export const Events: FC = () => {
-  const { isAuthenticated, isLoading, loginWithRedirect, user } = useAuth0();
+  const { isAuthenticated } = useAuth0();
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -70,4 +70,5 @@ export const Events: FC = () => {
       </Tabs>
     </div>
   );
+
 };
