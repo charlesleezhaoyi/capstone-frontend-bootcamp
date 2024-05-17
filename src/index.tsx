@@ -4,6 +4,8 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { Auth0Provider } from "@auth0/auth0-react";
+import { Toaster } from "../src/components/ui/toaster";
+import { UserProvider } from "./UserContext";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -23,7 +25,10 @@ root.render(
     // cacheLocation="localstorage"
   >
     {/* <React.StrictMode> */}
-    <App />
+    <UserProvider>
+      <App />
+      <Toaster />
+    </UserProvider>
     {/* </React.StrictMode> */}
   </Auth0Provider>
 );
