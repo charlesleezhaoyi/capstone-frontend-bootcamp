@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useNavigate } from "react-router";
-    
+
 import { AllEvents } from "../components/events/AllEvents";
 import { MyEvents } from "../components/events/MyEvents";
 import {
@@ -10,35 +10,12 @@ import {
   TabsContent,
   TabsTrigger,
 } from "../components/ui/tabs";
-    
+
 const isUserLoggedIn = true;
 
 export const Events: FC = () => {
   const { isAuthenticated } = useAuth0();
   const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (!isLoading) {
-  //     if (!isAuthenticated) {
-  //       loginWithRedirect();
-  //     }
-  //   }
-  // }
-  // , [isAuthenticated, isLoading, loginWithRedirect]);
-
-  const [isLoadingPage, setIsLoadingPage] = React.useState(true);
-
-  useEffect(() => {
-    console.log(user);
-    if (user && user.email && !user.email_verified) {
-      setIsLoadingPage(true);
-      navigate("/individual-onboarding");
-    }
-  }, [user, navigate]);
-
-  if (isLoadingPage) {
-    return <h1>Loading...</h1>;
-  }
 
   return (
     <div className="bg-gray-500 w-full min-h-full">
@@ -70,5 +47,4 @@ export const Events: FC = () => {
       </Tabs>
     </div>
   );
-
 };
