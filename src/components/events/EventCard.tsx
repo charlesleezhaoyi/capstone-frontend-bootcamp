@@ -1,0 +1,76 @@
+import React, { FC, ReactNode, useEffect, useState } from "react";
+import { PartyPopper } from "lucide-react";
+import { Event } from "@/src/hooks/useEvents";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  CardTitle,
+  CardDescription,
+} from "../ui/card";
+
+const defaultEventImage = (
+  <div className="bg-secondary-background flex justify-center p-5 rounded-md">
+    <PartyPopper className="w-1/3 h-1/3 block" color="grey" />
+  </div>
+);
+
+interface EventProps {
+  event: Event;
+}
+
+export const EventCard: FC<EventProps> = (props) => {
+  const {
+    event_overview,
+    event_name,
+    event_photo_url,
+    date,
+    time,
+    location,
+    price,
+  } = props.event;
+  const [eventImageElement, setEventImageElement] = useState<
+    ReactNode | undefined
+  >(defaultEventImage);
+
+  const setEventImageToDefault = () => {
+    setEventImageElement(defaultEventImage);
+  };
+
+  const loadEventImageElement = () => {
+    if (event_photo_url) {
+      setEventImageElement(
+        <img
+          src={event_photo_url}
+          alt="event banner"
+          onError={setEventImageToDefault}
+        />
+      );
+    }
+  };
+
+  useEffect(() => loadEventImageElement(), []);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>{event_name}</CardTitle>
+        <CardDescription>{event_overview}</CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col ">
+        {eventImageElement}
+        <div className="mt-3">
+          When: {new Date(date).toLocaleDateString() + " " + time}
+        </div>
+        <div className="mt-3">Where: {location}</div>
+        <div className="mt-3">Fee: ${price}</div>
+      </CardContent>
+      <CardFooter>
+        <div className="text-right w-full border-t-2 pt-6">
+          Coming: 10 Tentative: 2
+        </div>
+      </CardFooter>
+    </Card>
+  );
+};
