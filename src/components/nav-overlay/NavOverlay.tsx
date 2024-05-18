@@ -79,7 +79,9 @@ export const Nav: FC = () => {
         <div className="hidden md:flex flex-col p-6 w-[30%] max-w-[300px] border-t-2 border-secondary">
           <NavMenu />
         </div>
-        <Outlet />
+        <div className="flex-grow">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

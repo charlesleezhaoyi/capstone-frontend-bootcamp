@@ -38,7 +38,7 @@ export interface Member {
 export const useMembers = () => {
   const fetchMembersByNpoId = async (npoId: number) => {
     const fetchedMembers = await fetch(
-      process.env.REACT_APP_BACKEND_URL! + "/members/" + npoId,
+      process.env.REACT_APP_BACKEND_URL! + "/npoMembers/" + npoId,
       {
         method: "GET",
       }
