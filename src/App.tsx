@@ -46,8 +46,6 @@ function App() {
 
           <Route path="members" element={<Members />} />
           <Route path="discussions" element={<Discussions />} />
-
-          {/* <Route path="*" element={<Navigate to="/1/events" />} /> */}
         </Route>
       </Routes>
     </BrowserRouter>
