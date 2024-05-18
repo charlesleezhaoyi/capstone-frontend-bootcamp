@@ -14,6 +14,7 @@ interface Member {
   updatedAt: string;
 }
 export interface Event {
+  id: number;
   organiser_id: number;
   npo_id: number;
   event_overview: string;
@@ -29,7 +30,7 @@ export interface Event {
 export const useEvents = () => {
   const fetchEventsByNpoId = async (npoId: number) => {
     const fetchedEvents = await fetch(
-      process.env.REACT_APP_BACKEND_URL! + "/events/" + npoId,
+      process.env.REACT_APP_BACKEND_URL! + "/npoEvents/" + npoId + "/events/",
       {
         method: "GET",
       }

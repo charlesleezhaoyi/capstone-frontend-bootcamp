@@ -1,5 +1,11 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useParams,
+} from "react-router-dom";
 import { Nav } from "./components/nav-overlay/NavOverlay";
 import { Events } from "./pages/Events";
 import { Members } from "./pages/Members";
@@ -9,20 +15,21 @@ import { CorporateOnboarding } from "./pages/CorporateOnboarding";
 import { IndividualOnboarding } from "./pages/IndividualOnboarding";
 import { useContext } from "react";
 import AuthWrapper from "./components/auth0/AuthWrapper";
+import { Home } from "./pages/Home";
 
 function App() {
+  const RedirectToEvents = () => {
+    let { npoId } = useParams();
+    return <Navigate to={`/${npoId}/events`} replace />;
+  };
+
   return (
     <BrowserRouter>
       <Routes>
-        <Route element={<Nav />}>
-          <Route
-            path="events"
-            element={
-              <AuthWrapper>
-                <Events />
-              </AuthWrapper>
-            }
-          />
+        <Route path="/" element={<Nav />}>
+          <Route path="home" element={<Home />} />
+          <Route path=":npoId/" element={<RedirectToEvents />} />
+          <Route path=":npoId/events" element={<Events />} />
           <Route path="public-onboarding" element={<GenericOnboarding />} />
           <Route
             path="/individual-onboarding"
@@ -36,10 +43,12 @@ function App() {
             path="corporate-onboarding"
             element={<CorporateOnboarding />}
           />
+
           <Route path="members" element={<Members />} />
           <Route path="discussions" element={<Discussions />} />
+
+          {/* <Route path="*" element={<Navigate to="/1/events" />} /> */}
         </Route>
-        <Route path="*" element={<Navigate to="events" />} />
       </Routes>
     </BrowserRouter>
   );

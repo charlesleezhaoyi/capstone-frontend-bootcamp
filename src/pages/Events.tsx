@@ -25,14 +25,14 @@ export const Events: FC = () => {
             value="all"
             className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
           >
-            <h2>All Events</h2>
+            <h4>All Events</h4>
           </TabsTrigger>
           {isUserLoggedIn && (
             <TabsTrigger
               value="my"
               className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
             >
-              <h2>My Events</h2>
+              <h4>My Events</h4>
             </TabsTrigger>
           )}
         </TabsList>

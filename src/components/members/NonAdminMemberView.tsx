@@ -22,7 +22,7 @@ export const NonAdminMemberView: FC = () => {
   }, []);
 
   const memberCards = npoMembers?.map((member: Member) => (
-    <MemberCard member={member} />
+    <MemberCard key={member.id} member={member} />
   ));
 
   return (
