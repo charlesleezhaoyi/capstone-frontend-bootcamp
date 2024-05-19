@@ -26,7 +26,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Nav />}>
+        <Route element={<Nav />}>
           <Route path="home" element={<Home />} />
           <Route path=":npoId/" element={<RedirectToEvents />} />
           <Route path=":npoId/events" element={<Events />} />
@@ -47,6 +47,7 @@ function App() {
           <Route path="members" element={<Members />} />
           <Route path="discussions" element={<Discussions />} />
         </Route>
+        <Route path="*" element={<Navigate to="home" />} />
       </Routes>
     </BrowserRouter>
   );
