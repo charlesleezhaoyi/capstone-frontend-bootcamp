@@ -1,6 +1,7 @@
 import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { PenLine } from "lucide-react";
+import { Button } from "../../ui/button";
 import { type Member } from "@/src/hooks/useMembers";
 import { MemberDialog } from "../MemberDialog";
 

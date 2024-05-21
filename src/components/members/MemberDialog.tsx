@@ -42,10 +42,48 @@ export const MemberDialog: FC<MemberDialogProps> = ({
             </div>
           </div>
         </DialogHeader>
+        <div className="grid grid-cols-1 md:grid-cols-2">
+          <div className="flex flex-col justify-start">
+            <div className="font-bold">Occupation</div>
+            <div>{data.occupation}</div>
+          </div>
+          <div className="flex flex-col justify-start">
+            <div className="font-bold">Email</div>
+            <div>{data.email}</div>
+          </div>
+        </div>
+        <div className="flex flex-col justify-start">
+          {data.npoMembers[0].open_ended_ans_1 && (
+            <div>
+              <div className="font-bold">
+                {data.npoMembers[0].npos.open_ended_qn_1}
+              </div>
+              <div>{data.npoMembers[0].open_ended_ans_1}</div>
+            </div>
+          )}
+          {data.npoMembers[0].open_ended_ans_2 && (
+            <div>
+              <div className="font-bold">
+                {data.npoMembers[0].npos.open_ended_qn_2}
+              </div>
+              <div>{data.npoMembers[0].open_ended_ans_2}</div>
+            </div>
+          )}
+          {data.npoMembers[0].open_ended_ans_3 && (
+            <div>
+              <div className="font-bold">
+                {data.npoMembers[0].npos.open_ended_qn_3}
+              </div>
+              <div>{data.npoMembers[0].open_ended_ans_3}</div>
+            </div>
+          )}
+        </div>
 
         <DialogFooter>
-          <DialogClose className="flex flex-row justify-center w-full">
-            <Button className="text-white">Close</Button>
+          <DialogClose className="flex flex-row justify-center w-full" asChild>
+            <div>
+              <Button className="text-white md:w-20 w-14">Close</Button>
+            </div>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

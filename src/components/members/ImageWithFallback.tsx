@@ -4,7 +4,7 @@ import defaultUserImg from "../../assets/defaultUser.png";
 interface ImageWithFallbackProps {
   className?: string;
   alt: string;
-  src: string;
+  src: string | undefined;
 }
 
 export const ImageWithFallback: FC<ImageWithFallbackProps> = ({
@@ -12,7 +12,7 @@ export const ImageWithFallback: FC<ImageWithFallbackProps> = ({
   alt,
   src,
 }: ImageWithFallbackProps) => {
-  const [profileImg, setProfileImg] = useState<string>();
+  const [profileImg, setProfileImg] = useState<string | undefined>();
 
   useEffect(function loadProfileImg() {
     setProfileImg(src);
