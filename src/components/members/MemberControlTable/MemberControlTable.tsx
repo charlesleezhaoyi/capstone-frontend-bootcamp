@@ -65,7 +65,7 @@ export function MemberControlTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center justify-between py-4">
+      <div className="flex items-center justify-between pb-4">
         <div className="flex flex-row">
           <Input
             id="name-search"
