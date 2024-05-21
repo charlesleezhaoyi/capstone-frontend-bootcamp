@@ -93,7 +93,7 @@ export const MemberDialog: FC<MemberDialogProps> = ({
     <DropdownMenu open={isDropdownOpen} onOpenChange={toggleDropdown}>
       <DropdownMenuTrigger asChild>
         <Button
-          className="bg-background"
+          className="bg-background hover:bg-background"
           data-state={isDropdownOpen ? "open" : "closed"}
           aria-expanded={isDropdownOpen}
         >
