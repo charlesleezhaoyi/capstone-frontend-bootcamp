@@ -9,9 +9,8 @@ export const NonAdminMemberView: FC = () => {
 
   const fetchMembersAsync = async () => {
     try {
-      const fetchedMembers = await fetchMembersByNpoId(1);
-      setNpoMembers(fetchedMembers);
-      console.log(fetchedMembers);
+      const fetchedData = await fetchMembersByNpoId(1);
+      setNpoMembers(fetchedData);
     } catch (err) {
       console.log(err);
     }

@@ -26,7 +26,6 @@ import {
   DropdownMenuSeparator,
 } from "../../ui/dropdown-menu";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { Label } from "../../ui/label";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

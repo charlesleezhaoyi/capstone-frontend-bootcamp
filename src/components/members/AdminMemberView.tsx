@@ -13,8 +13,8 @@ export const AdminMemberView: FC = () => {
 
   const fetchMembersAsync = async () => {
     try {
-      const fetchedMembers = await fetchMembersByNpoId(1);
-      setNpoMembers(fetchedMembers);
+      const fetchedData = await fetchMembersByNpoId(1);
+      setNpoMembers(fetchedData);
     } catch (err) {
       console.log(err);
     }
@@ -32,6 +32,7 @@ export const AdminMemberView: FC = () => {
       name: member.full_name,
       role: member.npoMembers[0].roles.name,
       data: member,
+      memberObjectSetter: setNpoMembers,
     }));
     return outputData;
   };

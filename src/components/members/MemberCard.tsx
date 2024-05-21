@@ -15,7 +15,7 @@ export const MemberCard: FC<MemberProps> = ({ member }: MemberProps) => {
   const roleName = member.npoMembers[0].roles.name;
 
   return (
-    <MemberDialog data={member}>
+    <MemberDialog data={member} isAdmin={false}>
       <Card className="h-fit">
         <CardHeader>
           <div className="aspect-square overflow-clip flex flex-row items-center justify-center">

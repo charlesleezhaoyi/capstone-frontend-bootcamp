@@ -13,7 +13,6 @@ import { Discussions } from "./pages/Discussions";
 import { GenericOnboarding } from "./pages/GenericOnboarding";
 import { CorporateOnboarding } from "./pages/CorporateOnboarding";
 import { IndividualOnboarding } from "./pages/IndividualOnboarding";
-import { useContext } from "react";
 import AuthWrapper from "./components/auth0/AuthWrapper";
 import { Home } from "./pages/Home";
 
