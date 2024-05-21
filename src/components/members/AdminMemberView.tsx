@@ -15,7 +15,6 @@ export const AdminMemberView: FC = () => {
     try {
       const fetchedMembers = await fetchMembersByNpoId(1);
       setNpoMembers(fetchedMembers);
-      console.log(fetchedMembers);
     } catch (err) {
       console.log(err);
     }
@@ -32,6 +31,7 @@ export const AdminMemberView: FC = () => {
     const outputData = inputData.map((member) => ({
       name: member.full_name,
       role: member.npoMembers[0].roles.name,
+      data: member,
     }));
     return outputData;
   };

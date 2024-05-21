@@ -37,7 +37,7 @@ export function MemberControlTable<TData, TValue>({
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
-                  <TableHead key={header.id} className="text-center text-md">
+                  <TableHead key={header.id} className="text-md">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -58,7 +58,7 @@ export function MemberControlTable<TData, TValue>({
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} className="text-center text-md">
+                  <TableCell key={cell.id} className="text-md">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
