@@ -18,7 +18,11 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     return children;
   };
   return (
-    <div className={`flex-col h-full ${props.inSheet && "pt-5"}`}>
+    <div
+      className={`sticky top-0 flex-col h-full w-full ${
+        props.inSheet && "pt-5"
+      }`}
+    >
       <NavLink
         to="events"
         className={({ isActive }) =>

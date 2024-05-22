@@ -20,7 +20,7 @@ export const Events: FC = () => {
   return (
     <div className="bg-gray-500 w-full min-h-full">
       <Tabs defaultValue="all">
-        <TabsList className="bg-white border-t-2 border-secondary p-3 h-fit w-full rounded-none justify-start">
+        <TabsList className="sticky top-0 bg-white border-t-2 border-secondary p-3 h-fit w-full rounded-none justify-start">
           <TabsTrigger
             value="all"
             className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"

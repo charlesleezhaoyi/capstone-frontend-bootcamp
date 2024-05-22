@@ -71,15 +71,15 @@ export const Nav: FC = () => {
 
   return (
     <div className="flex h-screen w-screen flex-col">
-      <header className="sticky top-0 block text-secondary p-3">
+      <header className="block text-secondary p-3">
         {mobileHeader}
         {desktopHeader}
       </header>
-      <main className="flex flex-row h-full">
+      <main className="flex flex-row h-full overflow-hidden">
         <div className="hidden md:flex flex-col p-6 w-[30%] max-w-[300px] border-t-2 border-secondary">
           <NavMenu />
         </div>
-        <div className="flex-grow">
+        <div className="flex-grow overflow-scroll">
           <Outlet />
         </div>
       </main>
