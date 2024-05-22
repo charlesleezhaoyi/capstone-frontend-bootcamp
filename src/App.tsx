@@ -13,7 +13,6 @@ import { Discussions } from "./pages/Discussions";
 import { GenericOnboarding } from "./pages/GenericOnboarding";
 import { CorporateOnboarding } from "./pages/CorporateOnboarding";
 import { IndividualOnboarding } from "./pages/IndividualOnboarding";
-import { useContext } from "react";
 import AuthWrapper from "./components/auth0/AuthWrapper";
 import { Home } from "./pages/Home";
 
@@ -26,7 +25,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Nav />}>
+        <Route element={<Nav />}>
           <Route path="home" element={<Home />} />
           <Route path=":npoId/" element={<RedirectToEvents />} />
           <Route path=":npoId/events" element={<Events />} />
@@ -47,6 +46,7 @@ function App() {
           <Route path="members" element={<Members />} />
           <Route path="discussions" element={<Discussions />} />
         </Route>
+        <Route path="*" element={<Navigate to="home" />} />
       </Routes>
     </BrowserRouter>
   );
