@@ -37,7 +37,15 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="*" element={<Nav />}>
+        <Route
+          path="*"
+          element={
+            <div>
+              <Nav />
+              <Home />
+            </div>
+          }
+        >
           <Route path=":npoId/*" element={<Home />} />
           <Route path="home" element={<Home />} />
           {/* <Route path=":npoId/" element={<RedirectToEvents />} /> */}
