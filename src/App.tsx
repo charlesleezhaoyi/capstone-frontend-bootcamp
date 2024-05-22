@@ -37,18 +37,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route
-          path="*"
-          element={
-            <div>
-              <Nav />
-              <Home />
-            </div>
-          }
-        >
+        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="*" element={<Nav />}>
           <Route path=":npoId/*" element={<Home />} />
           <Route path="home" element={<Home />} />
-          {/* <Route path=":npoId/" element={<RedirectToEvents />} /> */}
           <Route
             path=":npoId/events"
             element={
