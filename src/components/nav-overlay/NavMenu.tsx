@@ -1,22 +1,47 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode, useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { SheetClose } from "../ui/sheet";
 
 // Icons
 import { CalendarDays } from "lucide-react";
 import { SquareUserRound } from "lucide-react";
+import { useAuth0 } from "@auth0/auth0-react";
+import axios from "axios";
 
 interface InSheetProps {
   inSheet?: boolean;
 }
 
 export const NavMenu: FC<InSheetProps> = (props) => {
+  const { user } = useAuth0();
+  const [npoIdParam, setNpoIdParam] = useState("allNpos"); // Initialize npoIdParam state
+
   const wrapChild = (isWrap: boolean | undefined, children: ReactNode) => {
     if (isWrap) {
       return <SheetClose>{children}</SheetClose>;
     }
     return children;
   };
+
+  useEffect(() => {
+    const getUserNPO = async () => {
+      try {
+        const response = await axios.post(
+          "http://localhost:3001/npoMembers/getNpoIDByMemberEmail",
+          {
+            email: user?.email,
+          }
+        );
+        setNpoIdParam(response.data); // Update npoIdParam state with the response data
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    getUserNPO();
+  }, [user]);
+
   return (
     <div
       className={`sticky top-0 flex-col h-full w-full ${
@@ -24,7 +49,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
       }`}
     >
       <NavLink
-        to="events"
+        to={`/${npoIdParam}/events`}
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""
@@ -39,7 +64,6 @@ export const NavMenu: FC<InSheetProps> = (props) => {
           </div>
         )}
       </NavLink>
-
       <NavLink
         to="members"
         className={({ isActive }) =>

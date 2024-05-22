@@ -10,6 +10,7 @@ import {
   TabsContent,
   TabsTrigger,
 } from "../components/ui/tabs";
+import ManageEvents from "../components/events/ManageEvents";
 
 const isUserLoggedIn = true;
 
@@ -32,7 +33,15 @@ export const Events: FC = () => {
               value="my"
               className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
             >
-              <h4>My Events</h4>
+              <h4>Attending</h4>
+            </TabsTrigger>
+          )}
+          {isUserLoggedIn && (
+            <TabsTrigger
+              value="manage"
+              className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
+            >
+              <h4>Manage</h4>
             </TabsTrigger>
           )}
         </TabsList>
@@ -42,6 +51,11 @@ export const Events: FC = () => {
         {isUserLoggedIn && (
           <TabsContent value="my" className="mt-0">
             <MyEvents />
+          </TabsContent>
+        )}
+        {isUserLoggedIn && (
+          <TabsContent value="manage" className="mt-0">
+            <ManageEvents />
           </TabsContent>
         )}
       </Tabs>
