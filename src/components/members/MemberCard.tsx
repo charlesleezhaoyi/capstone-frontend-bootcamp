@@ -5,6 +5,7 @@ import { Card, CardHeader, CardFooter } from "../ui/card";
 
 import { MemberDialog } from "./MemberDialog";
 import { ImageWithFallback } from "./ImageWithFallback";
+import defaultUserImg from "../../assets/defaultUser.png";
 
 interface MemberProps {
   member: Member;
@@ -23,6 +24,7 @@ export const MemberCard: FC<MemberProps> = ({ member }: MemberProps) => {
               className="h-full w-full object-cover rounded-md"
               alt="User Profile"
               src={display_img_url}
+              fallback={defaultUserImg}
             />
           </div>
         </CardHeader>

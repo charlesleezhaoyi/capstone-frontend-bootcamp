@@ -19,6 +19,7 @@ import { useMembers, type Member } from "../../hooks/useMembers";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 import { ImageWithFallback } from "./ImageWithFallback";
+import defaultUserImg from "../../assets/defaultUser.png";
 
 interface MemberDialogProps {
   data: Member;
@@ -131,6 +132,7 @@ export const MemberDialog: FC<MemberDialogProps> = ({
               src={data.display_img_url}
               alt="Member Profile"
               className="h-full w-full object-cover rounded-md"
+              fallback={defaultUserImg}
             />
           </div>
           <div className="ml-5">

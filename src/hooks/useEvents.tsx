@@ -39,5 +39,16 @@ export const useEvents = () => {
     return fetchedEventsData;
   };
 
-  return { fetchEventsByNpoId };
+  const fetchEventById = async (eventId: number) => {
+    const fetchedEvent = await fetch(
+      process.env.REACT_APP_BACKEND_URL! + "/npoEvents/" + eventId,
+      {
+        method: "GET",
+      }
+    );
+    const fetchedEventData = await fetchedEvent.json();
+    return fetchedEventData;
+  };
+
+  return { fetchEventById, fetchEventsByNpoId };
 };
