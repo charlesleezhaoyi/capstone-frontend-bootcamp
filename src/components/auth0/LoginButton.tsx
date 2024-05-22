@@ -3,9 +3,15 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "../ui/button";
 import { useUser } from "../../UserContext";
 
-const LoginButton = () => {
+const LoginButton = ({ npoId }: { npoId: string }) => {
   const { loginWithRedirect, isAuthenticated, user } = useAuth0();
   // const { loginUserContext } = useUser();
+
+  const login = (npoId: string) => {
+    loginWithRedirect({
+      appState: { targetUrl: `/${npoId}/events ` },
+    });
+  };
 
   // const checkUser = async () => {
   //   try {
@@ -38,11 +44,7 @@ const LoginButton = () => {
   // }, [isAuthenticated]);
 
   return (
-    <Button
-      variant="ghost"
-      className="w-full"
-      onClick={() => loginWithRedirect()}
-    >
+    <Button variant="ghost" className="w-full" onClick={() => login(npoId)}>
       Login
     </Button>
   );

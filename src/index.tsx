@@ -15,14 +15,11 @@ root.render(
     domain={process.env.REACT_APP_AUTH0_DOMAIN!}
     clientId={process.env.REACT_APP_AUTH0_CLIENT_ID!}
     authorizationParams={{
-      redirect_uri: "http://localhost:3000/events",
+      redirect_uri: "http://localhost:3000/default/events",
       audience: process.env.REACT_APP_AUTH0_AUDIENCE!,
       scope:
         "openid profile email read:current_user update:current_user_metadata",
     }}
-    // redirect_uri= "http://localhost:3000/events" // Remove this line
-    // useRefreshTokens={true}
-    // cacheLocation="localstorage"
   >
     {/* <React.StrictMode> */}
     <UserProvider>

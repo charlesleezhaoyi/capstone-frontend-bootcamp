@@ -18,9 +18,13 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     return children;
   };
   return (
-    <div className={`flex-col h-full ${props.inSheet && "pt-5"}`}>
+    <div
+      className={`sticky top-0 flex-col h-full w-full ${
+        props.inSheet && "pt-5"
+      }`}
+    >
       <NavLink
-        to="events"
+        to="/allNpos/events"
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""

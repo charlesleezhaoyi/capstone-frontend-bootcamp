@@ -11,10 +11,11 @@ import { Sheet, SheetTrigger, SheetContent } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Menu, CircleUserRound } from "lucide-react";
 import LoginButton from "../auth0/LoginButton";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 export const Nav: FC = () => {
   const { pathname } = useLocation();
+  const { npoId } = useParams<{ npoId: string }>();
   const rootPath = pathname.split("/")[1];
   const navigate = useNavigate();
   const handleClick = () => {
@@ -44,7 +45,7 @@ export const Nav: FC = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <LoginButton></LoginButton>
+            <LoginButton npoId={npoId ?? ""}></LoginButton>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Button className="text-white w-full">Sign Up</Button>
@@ -58,7 +59,7 @@ export const Nav: FC = () => {
     <nav className="hidden md:flex flex-row justify-between items-center px-5">
       <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
       <div className="flex flex-row">
-        <LoginButton></LoginButton>
+        <LoginButton npoId={npoId ?? ""}></LoginButton>
         <Button
           className="text-white w-full text-md rounded-lg"
           onClick={handleClick}
@@ -71,15 +72,15 @@ export const Nav: FC = () => {
 
   return (
     <div className="flex h-screen w-screen flex-col">
-      <header className="sticky top-0 block text-secondary p-3">
+      <header className="block text-secondary p-3">
         {mobileHeader}
         {desktopHeader}
       </header>
-      <main className="flex flex-row h-full">
+      <main className="flex flex-row h-full overflow-hidden">
         <div className="hidden md:flex flex-col p-6 w-[30%] max-w-[300px] border-t-2 border-secondary">
           <NavMenu />
         </div>
-        <div className="flex-grow">
+        <div className="flex-grow overflow-scroll">
           <Outlet />
         </div>
       </main>

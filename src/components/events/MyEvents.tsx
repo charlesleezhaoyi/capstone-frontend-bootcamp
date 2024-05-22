@@ -20,11 +20,13 @@ export const MyEvents: FC = () => {
     fetchEventsAsync();
   }, []);
 
-  const eventCards = events?.map((event: Event) => <EventCard event={event} />);
+  const eventCards = events?.map((event: Event) => (
+    <EventCard key={event.id} event={event} />
+  ));
 
   return (
     <Tabs defaultValue="upcoming">
-      <TabsList className="bg-white border-t-2 border-secondary p-3 h-fit w-full rounded-none justify-start">
+      <TabsList className="sticky top-0 bg-white border-t-2 border-secondary p-3 h-fit w-full rounded-none justify-start">
         <TabsTrigger
           value="upcoming"
           className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
