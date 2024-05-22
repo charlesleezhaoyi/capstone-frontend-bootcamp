@@ -98,6 +98,7 @@ export function CorporateOnboarding() {
     } = data;
 
     async function submitForm() {
+      console.log("submitting form");
       try {
         localStorage.setItem("npo_name", npo_name);
         await axios.post(`http://localhost:3001/npos/createNpo`, {
@@ -116,6 +117,8 @@ export function CorporateOnboarding() {
           is_verified: false,
         });
 
+        console.log("NPO created successfully");
+        console.log(email);
         const response = await axios.put(
           `http://localhost:3001/members/update`,
           {
@@ -131,6 +134,7 @@ export function CorporateOnboarding() {
           }
         );
 
+        console.log("Member updated successfully");
         if (response.status !== 200) {
           throw new Error("Failed to submit form");
         }

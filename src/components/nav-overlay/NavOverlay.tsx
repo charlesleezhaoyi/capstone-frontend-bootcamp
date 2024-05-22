@@ -15,7 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 export const Nav: FC = () => {
   const { pathname } = useLocation();
-  const { npoId } = useParams<{ npoId: string }>();
+  const { npo_name } = useParams<{ npo_name: string }>();
   const rootPath = pathname.split("/")[1];
   const navigate = useNavigate();
   const handleClick = () => {
@@ -45,7 +45,7 @@ export const Nav: FC = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem>
-            <LoginButton npoId={npoId ?? ""}></LoginButton>
+            <LoginButton npo_name={npo_name ?? ""}></LoginButton>
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Button className="text-white w-full">Sign Up</Button>
@@ -59,7 +59,7 @@ export const Nav: FC = () => {
     <nav className="hidden md:flex flex-row justify-between items-center px-5">
       <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
       <div className="flex flex-row">
-        <LoginButton npoId={npoId ?? ""}></LoginButton>
+        <LoginButton npo_name={npo_name ?? ""}></LoginButton>
         <Button
           className="text-white w-full text-md rounded-lg"
           onClick={handleClick}

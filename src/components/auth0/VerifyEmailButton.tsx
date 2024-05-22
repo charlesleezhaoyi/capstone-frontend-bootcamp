@@ -5,9 +5,14 @@ import axios from "axios";
 
 interface VerifyEmailButtonProps {
   disabled: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-const VerifyEmailButton: React.FC<VerifyEmailButtonProps> = ({ disabled }) => {
+export const VerifyEmailButton: React.FC<VerifyEmailButtonProps> = ({
+  disabled,
+  onClick,
+  ...props
+}) => {
   const { user } = useAuth0();
   const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
 
@@ -62,7 +67,7 @@ const VerifyEmailButton: React.FC<VerifyEmailButtonProps> = ({ disabled }) => {
         client_id: process.env.REACT_APP_AUTH0_API_EXPLORER_CLIENT_ID,
       });
 
-      console.log(token.access_token, data);
+      // console.log(token.access_token, data);
 
       await axios.post(url, data, {
         headers: {

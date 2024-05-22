@@ -18,31 +18,13 @@ import AuthWrapper from "./components/auth0/AuthWrapper";
 import { Home } from "./pages/Home";
 
 function App() {
-  const RedirectToEvents = () => {
-    let { npoId } = useParams<{ npoId: string }>();
-    const navigate = useNavigate();
-
-    if (isNaN(Number(npoId))) {
-      npoId = "allNpos";
-      navigate(`/${npoId}/events`);
-    }
-
-    return null;
-  };
-  // const RedirectToEvents = () => {
-  //   let { npoId } = useParams();
-  //   // return <Navigate to={`/${npoId}/events`} replace />;
-  // };
-
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/home" />} />
         <Route path="*" element={<Nav />}>
-          <Route path=":npoId/*" element={<Home />} />
           <Route path="home" element={<Home />} />
           <Route
-            path=":npoId/events"
+            path=":npo_name/events"
             element={
               <AuthWrapper>
                 <Events />
@@ -51,8 +33,7 @@ function App() {
           />
           <Route path="public-onboarding" element={<GenericOnboarding />} />
           <Route
-            path="
-            individual-onboarding"
+            path="individual-onboarding"
             element={<IndividualOnboarding />}
           />
           <Route
@@ -61,6 +42,7 @@ function App() {
           />
           <Route path="members" element={<Members />} />
           <Route path="discussions" element={<Discussions />} />
+          <Route path=":npo_name/*" element={<Home />} />
         </Route>
       </Routes>
     </BrowserRouter>

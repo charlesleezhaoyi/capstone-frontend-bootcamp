@@ -2,7 +2,7 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,8 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import axios from "axios";
+} from "../../ui/dropdown-menu";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -65,6 +64,11 @@ export type EventValue =
     };
 
 export const columns = (
+  // updateEvent: (
+  //   id: number,
+  //   organiserId: number,
+  //   updateData: object
+  // ) => Promise<void>,
   deleteEvent: (id: number, organiserId: number) => Promise<void>
 ): ColumnDef<Events, EventValue>[] => [
   // {
@@ -128,8 +132,11 @@ export const columns = (
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>View Event</DropdownMenuItem>
+
             <DropdownMenuItem
-            // onClick={() => navigator.clipboard.writeText(event.id.toString())}
+            // onClick={async () => {
+            //   await updateEvent(event.id, event.organiser_id, updateData);
+            // }}
             >
               Update Event Details
             </DropdownMenuItem>

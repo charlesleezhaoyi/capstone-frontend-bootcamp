@@ -8,7 +8,9 @@ import React, {
 
 interface UserContextType {
   userId: string;
-  loginUserContext: (id: string) => void;
+  userRole: string;
+  userNpo: string;
+  loginUserContext: (id: string, role: string, npo: string) => void;
   logoutUserContext: () => void;
 }
 
@@ -30,18 +32,24 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
   children,
 }) => {
   const [userId, setUserId] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [userNpo, setUserNpo] = useState("");
 
-  const loginUserContext = (id: string) => {
+  const loginUserContext = (id: string, role: string, npo: string) => {
     setUserId(id);
+    setUserRole(role);
+    setUserNpo(npo);
   };
 
   const logoutUserContext = () => {
     setUserId("");
+    setUserRole("");
+    setUserNpo("");
   };
 
   return (
     <UserContext.Provider
-      value={{ userId, loginUserContext, logoutUserContext }}
+      value={{ userId, userRole, userNpo, loginUserContext, logoutUserContext }}
     >
       {children}
     </UserContext.Provider>

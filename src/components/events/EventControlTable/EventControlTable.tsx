@@ -15,15 +15,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../../ui/table";
 
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onRowClick?: (row: TData) => void;
   deleteEvent: (id: number, organiserId: number) => Promise<void>;
+  // updateEvent: (
+  //   id: number,
+  //   organiserId: number,
+  //   updateData: object
+  // ) => Promise<void>;
 }
 
 export function DataTable<TData, TValue>({
@@ -31,7 +36,8 @@ export function DataTable<TData, TValue>({
   data,
   onRowClick,
   deleteEvent,
-}: DataTableProps<TData, TValue>) {
+}: // updateEvent,
+DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
