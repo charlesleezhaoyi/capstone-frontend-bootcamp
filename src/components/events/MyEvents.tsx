@@ -20,7 +20,9 @@ export const MyEvents: FC = () => {
     fetchEventsAsync();
   }, []);
 
-  const eventCards = events?.map((event: Event) => <EventCard event={event} />);
+  const eventCards = events?.map((event: Event) => (
+    <EventCard key={event.id} event={event} />
+  ));
 
   return (
     <Tabs defaultValue="upcoming">

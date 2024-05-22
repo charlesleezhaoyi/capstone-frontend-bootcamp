@@ -22,6 +22,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
   useEffect(() => {
     if (!isLoading) {
       if (!isAuthenticated) {
+        console.log(isAuthenticated, isLoading, user);
         // If the user is not authenticated, we start the login process
         loginWithRedirect();
       } else if (user && !user.email_verified) {

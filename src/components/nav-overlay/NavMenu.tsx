@@ -24,7 +24,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
       }`}
     >
       <NavLink
-        to="events"
+        to="/allNpos/events"
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""
