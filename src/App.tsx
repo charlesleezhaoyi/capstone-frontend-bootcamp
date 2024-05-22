@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { Nav } from "./components/nav-overlay/NavOverlay";
 import { Events } from "./pages/Events";
+import { EventPage } from "./pages/EventPage";
 import { Members } from "./pages/Members";
 import { Discussions } from "./pages/Discussions";
 import { GenericOnboarding } from "./pages/GenericOnboarding";
@@ -28,6 +29,14 @@ function App() {
             element={
               <AuthWrapper>
                 <Events />
+              </AuthWrapper>
+            }
+          />
+          <Route
+            path=":npoId/events/:eventId"
+            element={
+              <AuthWrapper>
+                <EventPage />
               </AuthWrapper>
             }
           />

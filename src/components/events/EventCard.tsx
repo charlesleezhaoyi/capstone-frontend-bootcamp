@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, useEffect, useState } from "react";
+import { Navigate, useLocation } from "react-router";
 import { PartyPopper } from "lucide-react";
 import { Event } from "@/src/hooks/useEvents";
 import {
@@ -22,6 +23,7 @@ interface EventProps {
 
 export const EventCard: FC<EventProps> = (props) => {
   const {
+    id,
     event_overview,
     event_name,
     event_photo_url,
@@ -33,7 +35,9 @@ export const EventCard: FC<EventProps> = (props) => {
   const [eventImageElement, setEventImageElement] = useState<
     ReactNode | undefined
   >(defaultEventImage);
-
+  const [navigateToEventPage, setNavigateToEventPage] =
+    useState<boolean>(false);
+  const { pathname } = useLocation();
   const setEventImageToDefault = () => {
     setEventImageElement(defaultEventImage);
   };
@@ -52,8 +56,19 @@ export const EventCard: FC<EventProps> = (props) => {
 
   useEffect(() => loadEventImageElement(), []);
 
+  const checkPathBeforeAppend = (path: string) => {
+    const lastChar = path[path.length - 1];
+    if (lastChar === "/") {
+      return path;
+    }
+    return path + "/";
+  };
+
   return (
-    <Card>
+    <Card onClick={() => setNavigateToEventPage(true)}>
+      {navigateToEventPage && (
+        <Navigate to={checkPathBeforeAppend(pathname) + id} />
+      )}
       <CardHeader>
         <CardTitle>{event_name}</CardTitle>
         <CardDescription>{event_overview}</CardDescription>
