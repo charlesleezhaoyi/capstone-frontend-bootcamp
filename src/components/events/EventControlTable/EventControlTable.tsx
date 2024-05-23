@@ -24,11 +24,6 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   onRowClick?: (row: TData) => void;
   deleteEvent: (id: number, organiserId: number) => Promise<void>;
-  // updateEvent: (
-  //   id: number,
-  //   organiserId: number,
-  //   updateData: object
-  // ) => Promise<void>;
 }
 
 export function DataTable<TData, TValue>({
