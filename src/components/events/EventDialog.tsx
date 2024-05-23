@@ -37,23 +37,27 @@ import { Calendar } from "../ui/calendar";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { useUser } from "../../UserContext";
+import { useEvents, Event } from "../../hooks/useEvents";
+import { copyFile } from "fs";
 
 interface EventDialogProps {
   npo_id: number;
+  onDialogClose: () => void;
+  eventObjectSetter?: React.Dispatch<React.SetStateAction<Event[]>>;
+  event?: Event;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export const EventDialog: FC<EventDialogProps> = () => {
+export const EventDialog: FC<EventDialogProps> = ({
+  npo_id,
+  onDialogClose,
+  eventObjectSetter,
+  event,
+  isOpen,
+  setIsOpen,
+}) => {
+  console.log(event);
   const { userId, userRole, userNpo } = useUser();
-  const [isOpen, setIsOpen] = useState(false);
-  const [eventData, setEventData] = useState({
-    npo_id: "",
-    organiser_id: "",
-    event_name: "",
-    event_overview: "",
-    date: "",
-    time: "",
-    location: "",
-    price: "",
-  });
 
   const formSchema = z.object({
     organiser_id: z.string(),
@@ -67,19 +71,37 @@ export const EventDialog: FC<EventDialogProps> = () => {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      organiser_id: "",
-      event_name: "",
-      event_overview: "",
-      date: "",
-      time: "",
-      location: "",
-      price: "",
-    },
   });
 
+  React.useEffect(() => {
+    if (event) {
+      form.reset({
+        organiser_id: event.organiser_id.toString(),
+        event_name: event.event_name,
+        event_overview: event.event_overview,
+        date: new Date(event.date).toISOString(),
+        time: event.time,
+        location: event.location,
+        price: event.price.toString(),
+      });
+    }
+  }, [event, form.reset]);
+  console.log(form);
+
+  const { fetchEventsByNpoId } = useEvents();
+  const updateEventsAsync = async () => {
+    try {
+      const fetchedData = await fetchEventsByNpoId(1);
+      if (eventObjectSetter) {
+        eventObjectSetter(fetchedData);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setEventData({
+    const newEventData = {
       npo_id: userNpo,
       organiser_id: userId,
       event_name: values.event_name,
@@ -88,20 +110,35 @@ export const EventDialog: FC<EventDialogProps> = () => {
       time: values.time,
       location: values.location,
       price: values.price,
-    });
-    console.log(userNpo);
+    };
 
-    console.log(eventData);
+    console.log(userNpo);
+    console.log(newEventData);
+
     try {
-      const response = await axios.post("http://localhost:3001/npoEvents/1", {
-        ...eventData,
-      });
+      let response;
+      if (event) {
+        // If an event was passed in, update the existing event
+        response = await axios.put(
+          `http://localhost:3001/npoEvents/1/`,
+          newEventData
+        );
+      } else {
+        // If no event was passed in, create a new event
+        response = await axios.post(
+          "http://localhost:3001/npoEvents/1",
+          newEventData
+        );
+      }
 
       toast({
         title: "Success!",
-        description: `Event has been created successfully. Response code: ${response.status}`,
+        description: `Event has been ${
+          event ? "updated" : "created"
+        } successfully. Response code: ${response.status}`,
       });
-      setIsOpen(false);
+
+      onDialogClose();
     } catch (err) {
       toast({
         title: "Uh oh",
@@ -109,7 +146,6 @@ export const EventDialog: FC<EventDialogProps> = () => {
       });
     }
   }
-
   const { toast } = useToast();
 
   return (
@@ -242,7 +278,7 @@ export const EventDialog: FC<EventDialogProps> = () => {
             </div>
             <div className="flex gap-4 justify-center w-full">
               <Button className="text-white md:w-20 w-14" type="submit">
-                Create
+                {event ? "Update" : "Create"}
               </Button>
               <DialogClose
                 className="text-black md:w-20 w-14"

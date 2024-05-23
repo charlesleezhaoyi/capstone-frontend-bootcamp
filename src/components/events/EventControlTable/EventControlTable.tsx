@@ -46,7 +46,7 @@ DataTableProps<TData, TValue>) {
   });
 
   const handleRowClick = (row: TData) => {
-    console.log("Row clicked:", row); // Add this line
+    console.log("Row clicked:", row);
     onRowClick && onRowClick(row);
   };
 
