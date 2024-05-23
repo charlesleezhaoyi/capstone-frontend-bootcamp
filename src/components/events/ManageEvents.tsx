@@ -51,7 +51,7 @@ export default function ManageEvents() {
   const deleteEvent = async (eventId: number, organiserId: number) => {
     try {
       console.log(eventId, organiserId);
-      const response = await axios.delete(`http://localhost:3001/npoEvents/1`, {
+      const response = await axios.delete(`http://localhost:3001/npoEvents/7`, {
         data: {
           organiser_id: organiserId,
           event_id: eventId,

@@ -71,18 +71,27 @@ export const EventDialog: FC<EventDialogProps> = ({
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      organiser_id: "",
+      event_name: "",
+      event_overview: "",
+      date: "",
+      time: "",
+      location: "",
+      price: "",
+    },
   });
 
   React.useEffect(() => {
     if (event) {
       form.reset({
-        organiser_id: event.organiser_id.toString(),
-        event_name: event.event_name,
-        event_overview: event.event_overview,
-        date: new Date(event.date).toISOString(),
-        time: event.time,
-        location: event.location,
-        price: event.price.toString(),
+        organiser_id: event.organiser_id ? event.organiser_id.toString() : "",
+        event_name: event.event_name || "",
+        event_overview: event.event_overview || "",
+        date: event.date ? new Date(event.date).toISOString() : "",
+        time: event.time || "",
+        location: event.location || "",
+        price: event.price ? event.price.toString() : "",
       });
     }
   }, [event, form.reset]);
@@ -100,6 +109,7 @@ export const EventDialog: FC<EventDialogProps> = ({
   };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("button click");
     const newEventData = {
       event_id: event?.id,
       npo_id: userNpo,
