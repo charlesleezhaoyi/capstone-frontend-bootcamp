@@ -76,16 +76,6 @@ const EventActionsCell: React.FC<EventActionsCellProps> = ({
         >
           Update Event Details
         </DropdownMenuItem>
-        {/* {isDialogOpen && (
-          <>
-            <EventDialog
-              npo_id={event.npo_id}
-              onDialogClose={() => setIsDialogOpen(false)}
-              eventObjectSetter={eventObjectSetter}
-              event={{ ...event, date: new Date(event.date) }}
-            />
-          </>
-        )} */}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => deleteEvent(event.id, event.organiser_id)}
@@ -139,57 +129,3 @@ export const columns = (
     },
   },
 ];
-
-// export type Events = {
-//   createdAt: string;
-//   updatedAt: string;
-//   date: string;
-//   event_name: string;
-//   event_overview: string;
-//   event_photo_url: string;
-//   id: number;
-//   location: string;
-//   npo_id: number;
-//   organiser: {
-//     createdAt: string;
-//     cv_url: string;
-//     date_of_birth: string;
-//     display_img_url: string;
-//     email: string;
-//     employee_at: string;
-//     full_name: string;
-//     gender: string;
-//     id: number;
-//     is_onboarded: boolean;
-//     occupation: string;
-//     portfolio_link_url: string;
-//     updatedAt: string;
-//   };
-//   organiser_id: number;
-//   price: number;
-//   time: string;
-// };
-// {
-//   accessorKey: "id",
-//   header: "ID",
-// },
-// {
-//   accessorKey: "event_overview",
-//   header: "Event Overview",
-// },
-// {
-//   accessorKey: "location",
-//   header: "Location",
-// },
-// {
-//   accessorKey: "createdAt",
-//   header: "Created At",
-// },
-// {
-//   accessorKey: "updatedAt",
-//   header: "Updated At",
-// },
-// {
-//   accessorKey: "organiser_email",
-//   header: "Organiser Email",
-// },
