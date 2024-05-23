@@ -86,7 +86,6 @@ export const EventDialog: FC<EventDialogProps> = ({
       });
     }
   }, [event, form.reset]);
-  console.log(form);
 
   const { fetchEventsByNpoId } = useEvents();
   const updateEventsAsync = async () => {
@@ -102,6 +101,7 @@ export const EventDialog: FC<EventDialogProps> = ({
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const newEventData = {
+      event_id: event?.id,
       npo_id: userNpo,
       organiser_id: userId,
       event_name: values.event_name,
@@ -112,13 +112,11 @@ export const EventDialog: FC<EventDialogProps> = ({
       price: values.price,
     };
 
-    console.log(userNpo);
-    console.log(newEventData);
-
     try {
       let response;
       if (event) {
         // If an event was passed in, update the existing event
+        console.log(newEventData);
         response = await axios.put(
           `http://localhost:3001/npoEvents/1/`,
           newEventData
@@ -142,7 +140,7 @@ export const EventDialog: FC<EventDialogProps> = ({
     } catch (err) {
       toast({
         title: "Uh oh",
-        description: `An error occurred`,
+        description: `An error occurred. `,
       });
     }
   }
