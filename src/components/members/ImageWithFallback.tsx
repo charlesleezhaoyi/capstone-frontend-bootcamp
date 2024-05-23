@@ -1,16 +1,17 @@
 import React, { FC, useState, useEffect } from "react";
-import defaultUserImg from "../../assets/defaultUser.png";
 
 interface ImageWithFallbackProps {
   className?: string;
   alt: string;
   src: string | undefined;
+  fallback: string;
 }
 
 export const ImageWithFallback: FC<ImageWithFallbackProps> = ({
   className,
   alt,
   src,
+  fallback,
 }: ImageWithFallbackProps) => {
   const [profileImg, setProfileImg] = useState<string | undefined>();
 
@@ -19,7 +20,7 @@ export const ImageWithFallback: FC<ImageWithFallbackProps> = ({
   }, []);
 
   const loadFallbackImg = () => {
-    setProfileImg(defaultUserImg);
+    setProfileImg(fallback);
   };
   return (
     <img
