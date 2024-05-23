@@ -12,8 +12,8 @@ import {
 } from "../ui/card";
 
 const defaultEventImage = (
-  <div className="bg-secondary-background flex justify-center p-5 rounded-md">
-    <PartyPopper className="w-1/3 h-1/3 block" color="grey" />
+  <div className="bg-secondary-background flex justify-center items-center p-5 h-full w-full">
+    <PartyPopper className="w-full h-full block" color="grey" />
   </div>
 );
 
@@ -73,13 +73,17 @@ export const EventCard: FC<EventProps> = (props) => {
         <CardTitle>{event_name}</CardTitle>
         <CardDescription>{event_overview}</CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col ">
-        {eventImageElement}
-        <div className="mt-3">
-          When: {new Date(date).toLocaleDateString() + " " + time}
+      <CardContent className="flex flex-col">
+        <div className="h-24 overflow-hidden rounded-md flex flex-row items-center justify-center">
+          {eventImageElement}
         </div>
-        <div className="mt-3">Where: {location}</div>
-        <div className="mt-3">Fee: ${price}</div>
+        <div className="h-40">
+          <div className="mt-3">
+            When: {new Date(date).toLocaleDateString() + " " + time}
+          </div>
+          <div className="mt-3">Where: {location}</div>
+          <div className="mt-3">Fee: ${price}</div>
+        </div>
       </CardContent>
       <CardFooter>
         <div className="text-right w-full border-t-2 pt-6">
