@@ -7,6 +7,7 @@ import { CalendarDays } from "lucide-react";
 import { SquareUserRound } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
+import { useUser } from "../../UserContext";
 
 interface InSheetProps {
   inSheet?: boolean;

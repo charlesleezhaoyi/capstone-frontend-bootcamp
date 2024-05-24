@@ -11,12 +11,14 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import ManageEvents from "../components/events/ManageEvents";
+import { useUser } from "../UserContext";
 
 const isUserLoggedIn = true;
 
 export const Events: FC = () => {
   const { isAuthenticated } = useAuth0();
   const navigate = useNavigate();
+  const { userRole } = useUser();
 
   return (
     <div className="bg-gray-500 w-full min-h-full">
@@ -36,7 +38,7 @@ export const Events: FC = () => {
               <h4>Attending</h4>
             </TabsTrigger>
           )}
-          {isUserLoggedIn && (
+          {isUserLoggedIn && (userRole === "2" || userRole === "3") && (
             <TabsTrigger
               value="manage"
               className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
@@ -55,7 +57,7 @@ export const Events: FC = () => {
         )}
         {isUserLoggedIn && (
           <TabsContent value="manage" className="mt-0">
-            <ManageEvents />
+            {(userRole === "2" || userRole === "3") && <ManageEvents />}
           </TabsContent>
         )}
       </Tabs>

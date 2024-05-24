@@ -31,7 +31,7 @@ export default function ManageEvents() {
 
   const fetchEventsAsync = async () => {
     try {
-      const fetchedEvents = await fetchEventsByNpoId(7);
+      const fetchedEvents = await fetchEventsByNpoId();
       setEvents(fetchedEvents);
       console.log(fetchedEvents);
     } catch (err) {

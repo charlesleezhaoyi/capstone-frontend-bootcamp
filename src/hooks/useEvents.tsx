@@ -1,3 +1,5 @@
+import { useUser } from "../UserContext";
+
 interface Member {
   id: number;
   full_name: string;
@@ -28,15 +30,22 @@ export interface Event {
 }
 
 export const useEvents = () => {
-  const fetchEventsByNpoId = async (npoId: number) => {
-    const fetchedEvents = await fetch(
-      process.env.REACT_APP_BACKEND_URL! + "/npoEvents/" + npoId + "/events/",
-      {
-        method: "GET",
-      }
-    );
-    const fetchedEventsData = await fetchedEvents.json();
-    return fetchedEventsData;
+  const { userNpo } = useUser();
+  const fetchEventsByNpoId = async () => {
+    // Not working on initial render
+    if (userNpo) {
+      const fetchedEvents = await fetch(
+        process.env.REACT_APP_BACKEND_URL! +
+          "/npoEvents/" +
+          userNpo +
+          "/events/",
+        {
+          method: "GET",
+        }
+      );
+      const fetchedEventsData = await fetchedEvents.json();
+      return fetchedEventsData;
+    }
   };
 
   const fetchEventById = async (eventId: number) => {
