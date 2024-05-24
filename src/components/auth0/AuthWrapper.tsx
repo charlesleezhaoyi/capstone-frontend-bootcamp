@@ -2,7 +2,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import React, { useEffect, ReactNode } from "react";
 import { useUser } from "../../UserContext";
 import { useNavigate } from "react-router-dom";
+import { Dialog } from "../ui/dialog";
 import axios from "axios";
+import { NPOSelectionDialog } from "../NPOSelectionDialog";
 
 interface AuthWrapperProps {
   children: React.ReactElement | null;
@@ -16,9 +18,11 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
     user,
     getAccessTokenSilently,
   } = useAuth0();
-  const { loginUserContext } = useUser();
+  const { loginUserContext, userId, userNpo, userRole } = useUser();
   const [isLoadingPage, setIsLoadingPage] = React.useState(false);
   const navigate = useNavigate();
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [userSelectedNpo, setUserSelectedNpo] = React.useState("");
 
   useEffect(() => {
     const checkUser = async () => {
@@ -31,17 +35,27 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
                 email: user.email,
               }
             );
-            const output = await axios.post(
-              "http://localhost:3001/npoMembers/",
-              {
-                member_id: getMemberId.data.data,
-              }
-            );
-            loginUserContext(
-              getMemberId.data.data,
-              output.data[0].role_id,
-              output.data[0].npo_id
-            );
+            loginUserContext(getMemberId.data.data, "", "");
+            const npos = await axios.post("http://localhost:3001/npoMembers/", {
+              member_id: getMemberId.data.data,
+            });
+            if (npos.data.length > 1) {
+              //NPOSelectionDialog is not tested
+              setIsDialogOpen(true);
+            } else {
+              const role = await axios.post(
+                "http://localhost:3001/npoMembers/getNpoMemberRole",
+                {
+                  member_id: getMemberId.data.data,
+                  npo_id: npos.data[0].npo_id,
+                }
+              );
+              loginUserContext(
+                getMemberId.data.data,
+                role.data[0].role_id,
+                npos.data[0].npo_id
+              );
+            }
           }
         }
       } catch (error) {
@@ -69,11 +83,49 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
     loginUserContext,
     navigate,
   ]);
+
+  useEffect(() => {
+    if (userSelectedNpo && user && user.email) {
+      const fetchRoleAndLogin = async () => {
+        const getMemberId = await axios.post(
+          "http://localhost:3001/members/retrieve",
+          {
+            email: user.email,
+          }
+        );
+        const role = await axios.post(
+          "http://localhost:3001/npoMembers/getNpoMembersRole",
+          {
+            member_id: getMemberId.data.data,
+            npo_id: userSelectedNpo,
+          }
+        );
+        loginUserContext(
+          getMemberId.data.data,
+          role.data.data[0].role_id,
+          userSelectedNpo
+        );
+      };
+      fetchRoleAndLogin();
+    }
+  }, [userSelectedNpo, user, loginUserContext]);
+
   if (isLoadingPage) {
     return <h1>Loading...</h1>;
   }
 
-  return isAuthenticated ? children : null;
+  return (
+    <>
+      {isAuthenticated ? children : null}
+      <NPOSelectionDialog
+        isOpen={isDialogOpen}
+        setIsOpen={setIsDialogOpen}
+        onNPOSelect={(npoId) => {
+          setUserSelectedNpo(npoId.toString());
+        }}
+      />
+    </>
+  );
 };
 
 export default AuthWrapper;
