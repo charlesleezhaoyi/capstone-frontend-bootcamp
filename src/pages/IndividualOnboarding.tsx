@@ -79,17 +79,6 @@ export const IndividualOnboarding: FC = () => {
 
   const userType = localStorage.getItem("userType");
 
-  useEffect(() => {
-    if (!isLoading) {
-      console.log(isAuthenticated, user, isLoading);
-      if (!isAuthenticated) {
-        // If the user is not authenticated, we start the login process
-      } else if (user && user.email) {
-        setUserEmail(user.email);
-      }
-    }
-  }, [isAuthenticated, isLoading, user]);
-
   const submitForm = async (
     full_name: string,
     dob: Date,
@@ -103,14 +92,6 @@ export const IndividualOnboarding: FC = () => {
     try {
       if (!user) {
         throw new Error("User not found");
-      }
-
-      if (!user.email_verified) {
-        console.log("sending toast");
-        toast({
-          title: "Please verify your email",
-          description: "You need to verify your email before you can proceed",
-        });
       }
 
       await axios.put(`http://localhost:3001/members/update`, {
@@ -131,7 +112,6 @@ export const IndividualOnboarding: FC = () => {
         }
       );
       const member_id = response.data.data;
-      console.log(npo_name);
       if (userType === "corporate") {
         const npo_name = localStorage.getItem("npo_name");
         console.log(npo_name);
@@ -139,13 +119,13 @@ export const IndividualOnboarding: FC = () => {
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
           npo_name: npo_name,
           member_id: member_id,
-          role_id: 1,
+          // role_id: 1,
         });
       } else if (userType === "individual") {
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
           npo_name: npo_name,
           member_id: member_id,
-          role_id: 3,
+          // role_id: 3,
         });
       } else {
         throw new Error("User not found");
@@ -187,9 +167,17 @@ export const IndividualOnboarding: FC = () => {
         userType ?? "",
         npo_name
       );
+      if (!user.email_verified) {
+        console.log("sending toast");
+        toast({
+          title: "Please verify your email",
+          description: "You need to verify your email before you can proceed",
+        });
+        return;
+      }
+
       navigate("/events");
     } catch (error) {
-      // Handle the error
       console.error(error);
       toast({
         title: "Submission error",
@@ -371,6 +359,7 @@ export const IndividualOnboarding: FC = () => {
         )}
         <VerifyEmailButton
           disabled={!form.formState.isValid}
+          onClick={(e) => e.preventDefault()}
         ></VerifyEmailButton>
         <Button
           type="submit"

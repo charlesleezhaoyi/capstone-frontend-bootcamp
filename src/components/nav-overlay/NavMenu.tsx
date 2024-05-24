@@ -14,7 +14,7 @@ interface InSheetProps {
 
 export const NavMenu: FC<InSheetProps> = (props) => {
   const { user } = useAuth0();
-  const [npoIdParam, setNpoIdParam] = useState("allNpos"); // Initialize npoIdParam state
+  const [npoNameParam, setNpoNameParam] = useState("allNpos"); // Initialize npoIdParam state
 
   const wrapChild = (isWrap: boolean | undefined, children: ReactNode) => {
     if (isWrap) {
@@ -27,14 +27,18 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     const getUserNPO = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:3001/npoMembers/getNpoIDByMemberEmail",
+          "http://localhost:3001/npoMembers/getNpoNameByMemberEmail",
           {
             email: user?.email,
           }
         );
-        setNpoIdParam(response.data); // Update npoIdParam state with the response data
+        setNpoNameParam(response.data);
         console.log(response.data);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response.msg === "Member has multiple NPOs") {
+          setNpoNameParam("allNpos");
+          // setNpoFilter(true);
+        }
         console.error(error);
       }
     };
@@ -49,7 +53,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
       }`}
     >
       <NavLink
-        to={`/${npoIdParam}/events`}
+        to={`/${npoNameParam}/events`}
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""

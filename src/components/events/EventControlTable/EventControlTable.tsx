@@ -15,9 +15,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "../../ui/table";
 
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,7 +31,8 @@ export function DataTable<TData, TValue>({
   data,
   onRowClick,
   deleteEvent,
-}: DataTableProps<TData, TValue>) {
+}: // updateEvent,
+DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
@@ -40,7 +41,7 @@ export function DataTable<TData, TValue>({
   });
 
   const handleRowClick = (row: TData) => {
-    console.log("Row clicked:", row); // Add this line
+    console.log("Row clicked:", row);
     onRowClick && onRowClick(row);
   };
 
