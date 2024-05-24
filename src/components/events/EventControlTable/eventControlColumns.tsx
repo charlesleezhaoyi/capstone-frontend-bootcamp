@@ -101,17 +101,26 @@ export const columns = (
   {
     accessorKey: "date",
     header: "Date",
-    accessorFn: (event: EventColumnAttributes) => event.date,
+    accessorFn: (event: EventColumnAttributes) =>
+      new Date(event.date).toISOString().slice(0, 10),
   },
   {
     accessorKey: "time",
     header: "Time",
-    accessorFn: (event: EventColumnAttributes) => event.time,
+    accessorFn: (event: EventColumnAttributes) => {
+      const [hours, minutes] = event.time.split(":").map(Number);
+      return `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")} SGT`;
+    },
   },
   {
     accessorKey: "price",
     header: "Price",
-    accessorFn: (event: EventColumnAttributes) => event.price,
+    accessorFn: (event: EventColumnAttributes) => {
+      const displayedPrice = event.price.toFixed(2);
+      return `$${displayedPrice}`;
+    },
   },
   {
     id: "actions",

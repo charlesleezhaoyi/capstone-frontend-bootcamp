@@ -240,9 +240,11 @@ export const EventDialog: FC<EventDialogProps> = ({
                                 field.onChange(date.toISOString());
                               }
                             }}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
+                            disabled={(date) => {
+                              const today = new Date();
+                              today.setHours(0, 0, 0, 0);
+                              return date < today;
+                            }}
                             initialFocus
                           />
                         </PopoverContent>
@@ -284,7 +286,7 @@ export const EventDialog: FC<EventDialogProps> = ({
                     <FormItem>
                       <FormLabel>Price</FormLabel>
                       <FormControl>
-                        <Input placeholder="Free of charge" {...field} />
+                        <Input placeholder="0" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
