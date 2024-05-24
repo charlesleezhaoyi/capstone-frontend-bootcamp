@@ -1,14 +1,16 @@
 import React, { FC, useEffect, useState } from "react";
 import { EventCard } from "./EventCard";
 import { Event, useEvents } from "../../hooks/useEvents";
+import { useUser } from "../../UserContext";
 
 export const AllEvents: FC = () => {
   const [events, setEvents] = useState<Event[]>();
   const { fetchEventsByNpoId } = useEvents();
+  const { userNpo } = useUser();
 
   const fetchEventsAsync = async () => {
     try {
-      const fetchedEvents = await fetchEventsByNpoId(1);
+      const fetchedEvents = await fetchEventsByNpoId();
       console.log(fetchedEvents);
       setEvents(fetchedEvents);
     } catch (err) {

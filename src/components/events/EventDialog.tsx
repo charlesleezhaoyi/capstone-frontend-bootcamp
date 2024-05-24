@@ -90,7 +90,7 @@ export const EventDialog: FC<EventDialogProps> = ({
   const { fetchEventsByNpoId } = useEvents();
   const updateEventsAsync = async () => {
     try {
-      const fetchedData = await fetchEventsByNpoId(1);
+      const fetchedData = await fetchEventsByNpoId();
       if (eventObjectSetter) {
         eventObjectSetter(fetchedData);
       }

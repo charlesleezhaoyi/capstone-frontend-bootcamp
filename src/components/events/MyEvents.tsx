@@ -9,7 +9,7 @@ export const MyEvents: FC = () => {
 
   const fetchEventsAsync = async () => {
     try {
-      const fetchedEvents = await fetchEventsByNpoId(1);
+      const fetchedEvents = await fetchEventsByNpoId();
       setEvents(fetchedEvents);
     } catch (err) {
       console.log(err);

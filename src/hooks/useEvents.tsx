@@ -31,15 +31,21 @@ export interface Event {
 
 export const useEvents = () => {
   const { userNpo } = useUser();
-  const fetchEventsByNpoId = async (npoId: number) => {
-    const fetchedEvents = await fetch(
-      process.env.REACT_APP_BACKEND_URL! + "/npoEvents/" + userNpo + "/events/",
-      {
-        method: "GET",
-      }
-    );
-    const fetchedEventsData = await fetchedEvents.json();
-    return fetchedEventsData;
+  const fetchEventsByNpoId = async () => {
+    // Not working on initial render
+    if (userNpo) {
+      const fetchedEvents = await fetch(
+        process.env.REACT_APP_BACKEND_URL! +
+          "/npoEvents/" +
+          userNpo +
+          "/events/",
+        {
+          method: "GET",
+        }
+      );
+      const fetchedEventsData = await fetchedEvents.json();
+      return fetchedEventsData;
+    }
   };
 
   const fetchEventById = async (eventId: number) => {
