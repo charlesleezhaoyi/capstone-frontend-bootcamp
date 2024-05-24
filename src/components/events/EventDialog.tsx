@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -22,23 +22,14 @@ import {
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, UseFormReturn } from "react-hook-form";
 import { useToast } from "../ui/use-toast";
 import { Calendar } from "../ui/calendar";
-import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { useUser } from "../../UserContext";
 import { useEvents, Event } from "../../hooks/useEvents";
-import { copyFile } from "fs";
 
 interface EventDialogProps {
   npo_id: number;
@@ -129,13 +120,13 @@ export const EventDialog: FC<EventDialogProps> = ({
         // If an event was passed in, update the existing event
         console.log(newEventData);
         response = await axios.put(
-          `http://localhost:3001/npoEvents/1/`,
+          `http://localhost:3001/npoEvents/${userNpo}/`,
           newEventData
         );
       } else {
         // If no event was passed in, create a new event
         response = await axios.post(
-          "http://localhost:3001/npoEvents/1",
+          `http://localhost:3001/npoEvents/${userNpo}`,
           newEventData
         );
       }
