@@ -25,14 +25,27 @@ const LoginButton = ({ npo_name }: { npo_name: string }) => {
               email: user.email,
             }
           );
-          const output = await axios.post("http://localhost:3001/npoMembers/", {
+          loginUserContext(getMemberId.data.data, "", "");
+          const npos = await axios.post("http://localhost:3001/npoMembers/", {
             member_id: getMemberId.data.data,
           });
-          loginUserContext(
-            getMemberId.data.data,
-            output.data[0].npo_id,
-            output.data[0].role_id
-          );
+          if (npos.data.length > 1) {
+            //NPOSelectionDialog is not tested
+            // setIsDialogOpen(true);
+          } else {
+            const role = await axios.post(
+              "http://localhost:3001/npoMembers/getNpoMemberRole",
+              {
+                member_id: getMemberId.data.data,
+                npo_id: npos.data[0].npo_id,
+              }
+            );
+            loginUserContext(
+              getMemberId.data.data,
+              role.data[0].role_id,
+              npos.data[0].npo_id
+            );
+          }
         }
       }
     } catch (error) {

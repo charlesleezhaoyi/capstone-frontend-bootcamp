@@ -38,14 +38,15 @@ export const Events: FC = () => {
               <h4>Attending</h4>
             </TabsTrigger>
           )}
-          {isUserLoggedIn && (userRole === "2" || userRole === "3") && (
-            <TabsTrigger
-              value="manage"
-              className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
-            >
-              <h4>Manage</h4>
-            </TabsTrigger>
-          )}
+          {isUserLoggedIn &&
+            (userRole.toString() === "1" || userRole.toString() === "2") && (
+              <TabsTrigger
+                value="manage"
+                className="data-[state=active]:bg-secondary-background data-[state=active]:text-foreground text-secondary mr-2"
+              >
+                <h4>Manage</h4>
+              </TabsTrigger>
+            )}
         </TabsList>
         <TabsContent value="all" className="mt-0">
           <AllEvents />
@@ -57,7 +58,9 @@ export const Events: FC = () => {
         )}
         {isUserLoggedIn && (
           <TabsContent value="manage" className="mt-0">
-            {(userRole === "2" || userRole === "3") && <ManageEvents />}
+            {(userRole.toString() === "1" || userRole.toString() === "2") && (
+              <ManageEvents />
+            )}
           </TabsContent>
         )}
       </Tabs>

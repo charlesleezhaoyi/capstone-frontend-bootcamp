@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog } from "../ui/dialog";
 import axios from "axios";
 import { NPOSelectionDialog } from "../NPOSelectionDialog";
+import { get } from "http";
 
 interface AuthWrapperProps {
   children: React.ReactElement | null;
@@ -44,7 +45,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
               setIsDialogOpen(true);
             } else {
               const role = await axios.post(
-                "http://localhost:3001/npoMembers/getNpoMemberRole",
+                "http://localhost:3001/npoMembers/getNpoMembersRole",
                 {
                   member_id: getMemberId.data.data,
                   npo_id: npos.data[0].npo_id,
