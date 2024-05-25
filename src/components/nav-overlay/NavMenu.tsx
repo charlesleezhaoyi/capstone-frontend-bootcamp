@@ -27,6 +27,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
   useEffect(() => {
     const getUserNPO = async () => {
       try {
+        console.log(userId);
         const response = await axios.post(
           "http://localhost:3001/npoMembers/getNpoNameByMemberID",
           {
@@ -48,7 +49,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     };
 
     getUserNPO();
-  }, []);
+  }, [userId]);
 
   return (
     <div

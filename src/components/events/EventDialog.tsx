@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState, ReactNode } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -30,6 +30,7 @@ import { Calendar } from "../ui/calendar";
 import axios from "axios";
 import { useUser } from "../../UserContext";
 import { useEvents, Event } from "../../hooks/useEvents";
+import { PartyPopper } from "lucide-react";
 
 interface EventDialogProps {
   npo_id: number;
@@ -49,9 +50,23 @@ export const EventDialog: FC<EventDialogProps> = ({
 }) => {
   // console.log(event);
   const { userId, userRole, userNpo } = useUser();
+  const defaultEventImage = (
+    <div className="bg-secondary-background flex justify-center items-center p-5 h-full w-full">
+      <PartyPopper className="w-full h-full block" color="grey" />
+    </div>
+  );
+  const [eventImageElement, setEventImageElement] = useState<
+    ReactNode | undefined
+  >(defaultEventImage);
+  const setEventImageToDefault = () => {
+    setEventImageElement(defaultEventImage);
+  };
 
   const formSchema = z.object({
     organiser_id: z.string(),
+    event_photo_url: z
+      .instanceof(FileList)
+      .refine((file) => file?.length === 1, "Event cover photos are highly encouraged"),
     event_name: z.string(),
     event_overview: z.string(),
     date: z.string(),
@@ -64,6 +79,7 @@ export const EventDialog: FC<EventDialogProps> = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       organiser_id: "",
+      event_photo_url: undefined,
       event_name: "",
       event_overview: "",
       date: "",
@@ -73,10 +89,13 @@ export const EventDialog: FC<EventDialogProps> = ({
     },
   });
 
+  const fileRef = form.register("event_photo_url");
+
   React.useEffect(() => {
     if (event) {
       form.reset({
         organiser_id: event.organiser_id ? event.organiser_id.toString() : "",
+        event_photo_url: undefined,
         event_name: event.event_name || "",
         event_overview: event.event_overview || "",
         date: event.date ? new Date(event.date).toISOString() : "",
@@ -103,6 +122,7 @@ export const EventDialog: FC<EventDialogProps> = ({
     console.log("button click");
     const newEventData = {
       event_id: event?.id,
+      event_photo_url: values.event_photo_url,
       npo_id: userNpo,
       organiser_id: userId,
       event_name: values.event_name,
@@ -162,6 +182,25 @@ export const EventDialog: FC<EventDialogProps> = ({
           <DialogHeader>Create Event</DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="event_photo_url"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel>Pictures to make your event awesome</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          placeholder="Event Cover Photo"
+                          {...fileRef}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
               <FormField
                 control={form.control}
                 name="event_name"
