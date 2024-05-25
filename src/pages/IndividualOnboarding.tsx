@@ -111,7 +111,7 @@ export const IndividualOnboarding: FC = () => {
           email: user.email,
         }
       );
-      const member_id = response.data.data;
+      const member_id = parseInt(response.data.data, 10);
       if (userType === "corporate") {
         const npo_name = localStorage.getItem("npo_name");
         console.log(npo_name);
@@ -122,7 +122,6 @@ export const IndividualOnboarding: FC = () => {
           // role_id: 1,
         });
       } else if (userType === "individual") {
-        const npo_name = localStorage.getItem("npo_name");
         console.log(npo_name);
         console.log(member_id);
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
