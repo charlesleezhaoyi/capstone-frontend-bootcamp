@@ -23,20 +23,21 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
   const [isLoadingPage, setIsLoadingPage] = React.useState(false);
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [userSelectedNpo, setUserSelectedNpo] = React.useState("");
+  const [userSelectedNpo, setUserSelectedNpo] = React.useState(0);
 
   useEffect(() => {
     const checkUser = async () => {
       try {
         if (isAuthenticated) {
           if (user && user.email && user.email_verified) {
+            console.log("First useEffect dependencies :");
             const getMemberId = await axios.post(
               "http://localhost:3001/members/retrieve",
               {
                 email: user.email,
               }
             );
-            loginUserContext(getMemberId.data.data, "", "");
+            loginUserContext(getMemberId.data.data, 0, 0);
             const npos = await axios.post("http://localhost:3001/npoMembers/", {
               member_id: getMemberId.data.data,
             });
@@ -81,13 +82,13 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
     loginWithRedirect,
     user,
     getAccessTokenSilently,
-    loginUserContext,
     navigate,
   ]);
 
   useEffect(() => {
     if (userSelectedNpo && user && user.email) {
       const fetchRoleAndLogin = async () => {
+        console.log("Second useEffect dependencies:");
         const getMemberId = await axios.post(
           "http://localhost:3001/members/retrieve",
           {
@@ -122,7 +123,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
         isOpen={isDialogOpen}
         setIsOpen={setIsDialogOpen}
         onNPOSelect={(npoId) => {
-          setUserSelectedNpo(npoId.toString());
+          setUserSelectedNpo(npoId);
         }}
       />
     </>

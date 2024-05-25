@@ -114,6 +114,11 @@ export const columns = (
         .padStart(2, "0")} SGT`;
     },
   },
+  // {
+  //   accessorKey: "attendees",
+  //   header: "Number of attendees",
+  //   accessorFn: (event: EventColumnAttributes) => event.rsvpCount,
+  //   },
   {
     accessorKey: "price",
     header: "Price",

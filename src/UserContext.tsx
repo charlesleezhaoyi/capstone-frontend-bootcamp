@@ -6,12 +6,19 @@ import React, {
   FunctionComponent,
 } from "react";
 
+interface Event {
+  id: number;
+}
+
 interface UserContextType {
-  userId: string;
-  userRole: string;
-  userNpo: string;
-  loginUserContext: (id: string, role: string, npo: string) => void;
+  userId: number;
+  userRole: number;
+  userNpo: number;
+  rsvpedEvents: Event[];
+  loginUserContext: (id: number, role: number, npo: number) => void;
   logoutUserContext: () => void;
+  addToRsvpedEvents: (eventId: number) => void;
+  removeRsvpedEvents: (eventId: number) => void;
 }
 
 interface UserProviderProps {
@@ -20,9 +27,9 @@ interface UserProviderProps {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-export const useUser = () => {
+export const useUser = (): UserContextType => {
   const context = useContext(UserContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error("useUser must be used within a UserProvider");
   }
   return context;
@@ -31,25 +38,48 @@ export const useUser = () => {
 export const UserProvider: FunctionComponent<UserProviderProps> = ({
   children,
 }) => {
-  const [userId, setUserId] = useState("");
-  const [userRole, setUserRole] = useState("");
-  const [userNpo, setUserNpo] = useState("");
+  const [userId, setUserId] = useState<number>(0);
+  const [userRole, setUserRole] = useState<number>(0);
+  const [userNpo, setUserNpo] = useState<number>(0);
+  const [rsvpedEvents, setRsvpedEvents] = useState<Event[]>([]);
 
-  const loginUserContext = (id: string, role: string, npo: string) => {
+  const loginUserContext = (id: number, role: number, npo: number): void => {
     setUserId(id);
     setUserRole(role);
     setUserNpo(npo);
   };
 
-  const logoutUserContext = () => {
-    setUserId("");
-    setUserRole("");
-    setUserNpo("");
+  const logoutUserContext = (): void => {
+    setUserId(0);
+    setUserRole(0);
+    setUserNpo(0);
+  };
+
+  const addToRsvpedEvents = (eventId: number): void => {
+    setRsvpedEvents((prevEventIds: Event[]) => [
+      ...prevEventIds,
+      { id: eventId },
+    ]);
+  };
+
+  const removeRsvpedEvents = (eventId: number): void => {
+    setRsvpedEvents((prevEventIds: Event[]) =>
+      prevEventIds.filter((event) => event.id !== eventId)
+    );
   };
 
   return (
     <UserContext.Provider
-      value={{ userId, userRole, userNpo, loginUserContext, logoutUserContext }}
+      value={{
+        userId,
+        userRole,
+        userNpo,
+        rsvpedEvents,
+        addToRsvpedEvents,
+        removeRsvpedEvents,
+        loginUserContext,
+        logoutUserContext,
+      }}
     >
       {children}
     </UserContext.Provider>

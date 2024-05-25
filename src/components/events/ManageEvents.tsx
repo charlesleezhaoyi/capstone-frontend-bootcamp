@@ -21,6 +21,7 @@ export default function ManageEvents() {
     undefined
   );
   const { userNpo } = useUser();
+  // const [rsvpCount, setRsvpCount] = useState(0);
 
   useEffect(() => {
     if (dialogClosed) {
@@ -49,7 +50,12 @@ export default function ManageEvents() {
     }
   }, [dialogClosed, reload]);
 
-  //update with dynamic endpoint to npo_id
+  // const fetchRsvpCount = async (eventId: number): Promise<number> => {
+  //   const rsvpCount = await countRsvpGivenEventId(eventId);
+  //   setRsvpCount(rsvpCount);
+  //   return rsvpCount;
+  // };
+
   const deleteEvent = async (eventId: number, organiserId: number) => {
     try {
       console.log(eventId, organiserId);
@@ -75,7 +81,7 @@ export default function ManageEvents() {
   };
 
   return (
-    <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex bg-white">
+    <div className="hidden h-screen flex-1 flex-col space-y-8 p-8 md:flex bg-white">
       <div className="flex items-center justify-between space-y-2">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
@@ -107,6 +113,7 @@ export default function ManageEvents() {
           setSelectedEvent({ ...row, date: new Date(row.date) })
         }
         deleteEvent={deleteEvent}
+        // fetchRsvpCount={fetchRsvpCount}
       />
     </div>
   );

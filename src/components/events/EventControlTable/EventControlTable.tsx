@@ -24,6 +24,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   onRowClick?: (row: TData) => void;
   deleteEvent: (id: number, organiserId: number) => Promise<void>;
+  // fetchRsvpCount: (eventId: number) => Promise<number>;
 }
 
 export function DataTable<TData, TValue>({
@@ -31,8 +32,7 @@ export function DataTable<TData, TValue>({
   data,
   onRowClick,
   deleteEvent,
-}: // updateEvent,
-DataTableProps<TData, TValue>) {
+}: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,

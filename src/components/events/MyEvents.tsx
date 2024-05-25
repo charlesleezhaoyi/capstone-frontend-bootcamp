@@ -2,15 +2,35 @@ import React, { FC, useState, useEffect } from "react";
 import { Event, useEvents } from "../../hooks/useEvents";
 import { EventCard } from "./EventCard";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "../ui/tabs";
+import { useUser } from "../../UserContext";
 
 export const MyEvents: FC = () => {
-  const [events, setEvents] = useState<Event[]>();
+  const [events, setEvents] = useState<{
+    upcomingEvents: Event[];
+    pastEvents: Event[];
+  }>({ upcomingEvents: [], pastEvents: [] });
   const { fetchEventsByNpoId } = useEvents();
+  const { rsvpedEvents } = useUser();
 
   const fetchEventsAsync = async () => {
     try {
       const fetchedEvents = await fetchEventsByNpoId();
-      setEvents(fetchedEvents);
+      const rsvpEventIds = rsvpedEvents.map((event) => event.id);
+      const rsvpEvents = fetchedEvents.filter((event: Event) =>
+        rsvpEventIds.includes(event.id)
+      );
+
+      const currentDate = new Date();
+
+      const upcomingEvents = rsvpEvents.filter(
+        (event: Event) => new Date(event.date) >= currentDate
+      );
+
+      const pastEvents = rsvpEvents.filter(
+        (event: Event) => new Date(event.date) < currentDate
+      );
+
+      setEvents({ upcomingEvents, pastEvents });
     } catch (err) {
       console.log(err);
     }
@@ -20,7 +40,11 @@ export const MyEvents: FC = () => {
     fetchEventsAsync();
   }, []);
 
-  const eventCards = events?.map((event: Event) => (
+  const upcomingEventCards = events?.upcomingEvents.map((event: Event) => (
+    <EventCard key={event.id} event={event} />
+  ));
+
+  const pastEventCards = events?.pastEvents.map((event: Event) => (
     <EventCard key={event.id} event={event} />
   ));
 
@@ -44,12 +68,12 @@ export const MyEvents: FC = () => {
 
       <TabsContent value="upcoming" className="mt-0">
         <div className="grid lg:gap-8 lg:p-8 lg:grid-cols-3 md:gap-4 md:p-4 md:grid-cols-2 grid-cols-1 gap-10 p-10">
-          {eventCards}
+          {upcomingEventCards}
         </div>
       </TabsContent>
       <TabsContent value="past" className="mt-0">
         <div className="grid lg:gap-8 lg:p-8 lg:grid-cols-3 md:gap-4 md:p-4 md:grid-cols-2 grid-cols-1 gap-10 p-10">
-          {eventCards}
+          {pastEventCards}
         </div>
       </TabsContent>
     </Tabs>
