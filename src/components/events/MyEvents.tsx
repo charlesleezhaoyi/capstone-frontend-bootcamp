@@ -2,15 +2,21 @@ import React, { FC, useState, useEffect } from "react";
 import { Event, useEvents } from "../../hooks/useEvents";
 import { EventCard } from "./EventCard";
 import { Tabs, TabsList, TabsContent, TabsTrigger } from "../ui/tabs";
+import { useUser } from "../../UserContext";
 
 export const MyEvents: FC = () => {
   const [events, setEvents] = useState<Event[]>();
   const { fetchEventsByNpoId } = useEvents();
+  const { rsvpedEvents } = useUser();
 
   const fetchEventsAsync = async () => {
     try {
       const fetchedEvents = await fetchEventsByNpoId();
-      setEvents(fetchedEvents);
+      const rsvpEventIds = rsvpedEvents.map((event) => event.id);
+      const rsvpEvents = fetchedEvents.filter((event: Event) =>
+        rsvpEventIds.includes(event.id)
+      );
+      setEvents(rsvpEvents);
     } catch (err) {
       console.log(err);
     }
