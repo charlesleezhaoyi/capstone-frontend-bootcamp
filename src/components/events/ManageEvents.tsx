@@ -8,6 +8,7 @@ import {
 import { EventDialog } from "./EventDialog";
 import { Event } from "../../hooks/useEvents";
 import { useEvents } from "../../hooks/useEvents";
+import { useUser } from "../../UserContext";
 import axios from "axios";
 import { set } from "date-fns";
 
@@ -19,6 +20,7 @@ export default function ManageEvents() {
   const [selectedEvent, setSelectedEvent] = useState<Event | undefined>(
     undefined
   );
+  const { userNpo } = useUser();
 
   useEffect(() => {
     if (dialogClosed) {
@@ -51,12 +53,15 @@ export default function ManageEvents() {
   const deleteEvent = async (eventId: number, organiserId: number) => {
     try {
       console.log(eventId, organiserId);
-      const response = await axios.delete(`http://localhost:3001/npoEvents/7`, {
-        data: {
-          organiser_id: organiserId,
-          event_id: eventId,
-        },
-      });
+      const response = await axios.delete(
+        `http://localhost:3001/npoEvents/${userNpo}`,
+        {
+          data: {
+            organiser_id: organiserId,
+            event_id: eventId,
+          },
+        }
+      );
       if (response.status !== 200) {
         console.log(response.data);
         throw new Error("Failed to delete event");

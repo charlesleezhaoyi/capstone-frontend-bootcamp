@@ -119,7 +119,7 @@ export const IndividualOnboarding: FC = () => {
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
           npo_name: npo_name,
           member_id: member_id,
-          // role_id: 1,
+          role_id: 1,
         });
       } else if (userType === "individual") {
         console.log(npo_name);
@@ -127,7 +127,7 @@ export const IndividualOnboarding: FC = () => {
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
           npo_name: npo_name,
           member_id: member_id,
-          // role_id: 3,
+          role_id: 3,
         });
       } else {
         throw new Error("User not found");
@@ -151,14 +151,14 @@ export const IndividualOnboarding: FC = () => {
       if (!user) {
         throw new Error("User is not authenticated");
       }
-      // if (!form.formState.isValid) {
-      //   toast({
-      //     title: "Form validation error",
-      //     description:
-      //       "Please fill out all required fields correctly before submitting the form.",
-      //   });
-      //   return;
-      // }
+      if (!user.email_verified) {
+        console.log("sending toast");
+        toast({
+          title: "Please verify your email",
+          description: "You need to verify your email before you can proceed",
+        });
+        return;
+      }
       await submitForm(
         full_name,
         dob,
@@ -169,14 +169,6 @@ export const IndividualOnboarding: FC = () => {
         userType ?? "",
         npo_name
       );
-      if (!user.email_verified) {
-        console.log("sending toast");
-        toast({
-          title: "Please verify your email",
-          description: "You need to verify your email before you can proceed",
-        });
-        return;
-      }
 
       navigate("/events");
     } catch (error) {
