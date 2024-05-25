@@ -22,8 +22,8 @@ export const Nav: FC = () => {
   const { npo_name } = useParams<{ npo_name: string }>();
   const rootPath = pathname.split("/")[1];
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth0();
-  const { userId } = useUser();
+  const { isAuthenticated, logout } = useAuth0();
+  const { userId, userInfo } = useUser();
   const handleClick = () => {
     navigate("/public-onboarding");
   };
@@ -69,13 +69,18 @@ export const Nav: FC = () => {
           <DropdownMenu>
             <DropdownMenuTrigger>
               <ImageWithFallback
-                src="placeholder"
+                src={userInfo?.display_img_url}
                 alt="navbar profile"
                 fallback={defaultUserImg}
                 className="h-8 w-8"
               />
             </DropdownMenuTrigger>
-            <DropdownMenuContent>userId: {userId}</DropdownMenuContent>
+            <DropdownMenuContent>
+              <div className="px-2">Hi {userInfo?.full_name}</div>
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <>
@@ -88,12 +93,6 @@ export const Nav: FC = () => {
             </Button>
           </>
         )}
-        <Button
-          className="text-white w-full text-md rounded-lg"
-          onClick={handleClick}
-        >
-          Sign Up
-        </Button>
       </div>
     </nav>
   );

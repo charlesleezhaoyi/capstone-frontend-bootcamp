@@ -29,7 +29,9 @@ export const MemberCard: FC<MemberProps> = ({ member }: MemberProps) => {
           </div>
         </CardHeader>
         <CardFooter className="flex flex-col">
-          <h3>{full_name}</h3>
+          <div className="flex flex-col h-20">
+            <h3>{full_name}</h3>
+          </div>
           <span>{roleName}</span>
         </CardFooter>
       </Card>
