@@ -23,7 +23,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
   const [isLoadingPage, setIsLoadingPage] = React.useState(false);
   const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [userSelectedNpo, setUserSelectedNpo] = React.useState("");
+  const [userSelectedNpo, setUserSelectedNpo] = React.useState(0);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -36,7 +36,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
                 email: user.email,
               }
             );
-            loginUserContext(getMemberId.data.data, "", "");
+            loginUserContext(getMemberId.data.data, 0, 0);
             const npos = await axios.post("http://localhost:3001/npoMembers/", {
               member_id: getMemberId.data.data,
             });
@@ -122,7 +122,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
         isOpen={isDialogOpen}
         setIsOpen={setIsDialogOpen}
         onNPOSelect={(npoId) => {
-          setUserSelectedNpo(npoId.toString());
+          setUserSelectedNpo(npoId);
         }}
       />
     </>

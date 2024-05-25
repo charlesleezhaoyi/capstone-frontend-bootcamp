@@ -1,4 +1,6 @@
 import { useUser } from "../UserContext";
+import { useState } from "react";
+import axios from "axios";
 
 interface Member {
   id: number;
@@ -31,6 +33,7 @@ export interface Event {
 
 export const useEvents = () => {
   const { userNpo } = useUser();
+  const [rsvpStatus, setRsvpStatus] = useState<Record<number, boolean>>({});
   const fetchEventsByNpoId = async () => {
     // Not working on initial render
     if (userNpo) {
@@ -59,5 +62,44 @@ export const useEvents = () => {
     return fetchedEventData;
   };
 
-  return { fetchEventById, fetchEventsByNpoId };
+  const rsvpToEvent = async (eventId: number, memberId: number) => {
+    const rsvpedEvent = await axios.post(
+      process.env.REACT_APP_BACKEND_URL! + "/eventMembers/rsvpEvent",
+      {
+        member_id: memberId,
+        event_id: eventId,
+      }
+    );
+    setRsvpStatus((prevStatus) => ({ ...prevStatus, [eventId]: true }));
+  };
+
+  const removeRsvpToEvent = async (eventId: number, memberId: number) => {
+    const removedRsvpedEvent = await axios.post(
+      process.env.REACT_APP_BACKEND_URL! + "/eventMembers/removeRsvpEvent",
+      {
+        member_id: memberId,
+        event_id: eventId,
+      }
+    );
+    setRsvpStatus((prevStatus) => ({ ...prevStatus, [eventId]: false }));
+  };
+
+  const checkRsvpToEvent = async (eventId: number, memberId: number) => {
+    const setRsvpStatus = await axios.post(
+      process.env.REACT_APP_BACKEND_URL! + "/eventMembers/checkRSVPStatus",
+      {
+        member_id: memberId,
+        event_id: eventId,
+      }
+    );
+  };
+
+  return {
+    fetchEventById,
+    fetchEventsByNpoId,
+    rsvpToEvent,
+    removeRsvpToEvent,
+    rsvpStatus,
+    checkRsvpToEvent,
+  };
 };

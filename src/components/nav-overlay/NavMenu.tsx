@@ -36,7 +36,10 @@ export const NavMenu: FC<InSheetProps> = (props) => {
         setNpoNameParam(response.data.replace(/\s/g, ""));
         console.log(response.data);
       } catch (error: any) {
-        if (error.response.msg === "Member has multiple NPOs") {
+        if (
+          error.response &&
+          error.response.msg === "Member has multiple NPOs"
+        ) {
           setNpoNameParam("allNpos");
           // setNpoFilter(true);
         }
