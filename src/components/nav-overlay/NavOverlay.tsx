@@ -12,12 +12,18 @@ import { Button } from "../ui/button";
 import { Menu, CircleUserRound } from "lucide-react";
 import LoginButton from "../auth0/LoginButton";
 import { useNavigate, useParams } from "react-router-dom";
+import { ImageWithFallback } from "../members/ImageWithFallback";
+import defaultUserImg from "../../assets/defaultUser.png";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useUser } from "../../UserContext";
 
 export const Nav: FC = () => {
   const { pathname } = useLocation();
   const { npo_name } = useParams<{ npo_name: string }>();
   const rootPath = pathname.split("/")[1];
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth0();
+  const { userId } = useUser();
   const handleClick = () => {
     navigate("/public-onboarding");
   };
@@ -58,8 +64,30 @@ export const Nav: FC = () => {
   const desktopHeader = (
     <nav className="hidden md:flex flex-row justify-between items-center px-5">
       <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
-      <div className="flex flex-row">
-        <LoginButton npo_name={npo_name ?? ""}></LoginButton>
+      <div className="flex flex-row items-center">
+        {isAuthenticated ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              <ImageWithFallback
+                src="placeholder"
+                alt="navbar profile"
+                fallback={defaultUserImg}
+                className="h-8 w-8"
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>userId: {userId}</DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <>
+            <LoginButton npo_name={npo_name ?? ""}></LoginButton>
+            <Button
+              className="text-white w-full text-md rounded-lg"
+              onClick={handleClick}
+            >
+              Sign Up
+            </Button>
+          </>
+        )}
         <Button
           className="text-white w-full text-md rounded-lg"
           onClick={handleClick}

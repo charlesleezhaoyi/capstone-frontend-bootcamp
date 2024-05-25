@@ -22,10 +22,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="*" element={<Nav />}>
+        <Route element={<Nav />}>
           <Route path="home" element={<Home />} />
           <Route
-            path=":npo_name/events"
+            path=":npo_url_extension/events"
             element={
               <AuthWrapper>
                 <Events />
@@ -33,13 +33,22 @@ function App() {
             }
           />
           <Route
-            path=":npoId/events/:eventId"
+            path=":npo_url_extension/events/:eventId"
             element={
               <AuthWrapper>
                 <EventPage />
               </AuthWrapper>
             }
           />
+          <Route
+            path=":npo_url_extension/members"
+            element={
+              <AuthWrapper>
+                <Members />
+              </AuthWrapper>
+            }
+          />
+          <Route path=":npo_url_extension/*" element={<Home />} />
           <Route path="public-onboarding" element={<GenericOnboarding />} />
           <Route
             path="individual-onboarding"
@@ -49,10 +58,8 @@ function App() {
             path="corporate-onboarding"
             element={<CorporateOnboarding />}
           />
-          <Route path="members" element={<Members />} />
-          <Route path="discussions" element={<Discussions />} />
-          <Route path=":npo_name/*" element={<Home />} />
         </Route>
+        <Route path="*" element={<Navigate to="home" />} />
       </Routes>
     </BrowserRouter>
   );

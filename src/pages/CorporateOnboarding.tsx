@@ -39,6 +39,7 @@ interface FormValues {
   key_activities: string; //change to enum later
   company_description: string;
   company_website_url: string;
+  website_url_extension: string;
   country_incorporated: string; //change to enum later
   company_size: string; //change to enum later
   company_logo_url: string;
@@ -56,6 +57,7 @@ const accountFormSchema = z.object({
     .max(30, { message: "Name must not be longer than 30 characters." }),
   company_description: z.string({}),
   company_website_url: z.string().url(),
+  website_url_extension: z.string({}),
   key_activities: z.string({}),
   country_incorporated: z.string({}),
   company_size: z.string({}),
@@ -91,6 +93,7 @@ export function CorporateOnboarding() {
       npo_name,
       key_activities,
       company_website_url,
+      website_url_extension,
       country_incorporated,
       company_size,
       company_description,
@@ -103,6 +106,7 @@ export function CorporateOnboarding() {
         localStorage.setItem("npo_name", npo_name);
         await axios.post(`http://localhost:3001/npos/createNpo`, {
           name: npo_name,
+          url_extension: website_url_extension,
           key_activities: key_activities,
           company_website_url: company_website_url,
           country_incorporated: country_incorporated,
@@ -246,6 +250,21 @@ export function CorporateOnboarding() {
               <FormDescription>
                 Share the link to your company website for us to find out more!
               </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/*Goodhub Website URL extension*/}
+        <FormField
+          control={form.control}
+          name="website_url_extension"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>URL Extension</FormLabel>
+              <FormControl>
+                <Input placeholder="goodhubsea.com/___" {...field} />
+              </FormControl>
+              <FormDescription>Choose a url extension</FormDescription>
               <FormMessage />
             </FormItem>
           )}

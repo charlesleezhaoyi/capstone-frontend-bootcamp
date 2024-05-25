@@ -28,13 +28,17 @@ interface MemberDialogProps {
   children: ReactNode;
 }
 
+const roleObject = { Owner: 1, Admin: 2, Member: 3 };
+
+type Role = "Owner" | "Admin" | "Member";
+
 export const MemberDialog: FC<MemberDialogProps> = ({
   data,
   children,
   isAdmin,
   memberObjectSetter,
 }: MemberDialogProps) => {
-  const [role, setRole] = useState<string>(data.npoMembers[0].roles.name);
+  const [role, setRole] = useState<Role>(data.npoMembers[0].roles.name as Role);
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   const { toast } = useToast();
@@ -42,7 +46,7 @@ export const MemberDialog: FC<MemberDialogProps> = ({
 
   const updateMembersAsync = async () => {
     try {
-      const fetchedData = await fetchMembersByNpoId(1);
+      const fetchedData = await fetchMembersByNpoId();
       if (memberObjectSetter) {
         memberObjectSetter(fetchedData);
       }
@@ -51,9 +55,9 @@ export const MemberDialog: FC<MemberDialogProps> = ({
     }
   };
 
-  const originalRole: string = data.npoMembers[0].roles.name;
+  const originalRole: Role = data.npoMembers[0].roles.name as Role;
 
-  const handleDropdownClick = (field: string) => {
+  const handleDropdownClick = (field: Role) => {
     setRole(field);
   };
 
@@ -67,11 +71,15 @@ export const MemberDialog: FC<MemberDialogProps> = ({
 
   const handleChangeRole = async () => {
     try {
+      console.log(data.id);
       const response = await fetch(
         process.env.REACT_APP_BACKEND_URL! + "/npoMembers/assignRole",
         {
           method: "POST",
-          body: JSON.stringify({ role_name: role, member_id: data.id }),
+          body: JSON.stringify({
+            role_id: roleObject[role],
+            member_id: data.id,
+          }),
           headers: {
             "Content-type": "application/json; charset=UTF-8",
           },
