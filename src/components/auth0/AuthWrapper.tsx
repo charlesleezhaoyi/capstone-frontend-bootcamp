@@ -30,6 +30,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
       try {
         if (isAuthenticated) {
           if (user && user.email && user.email_verified) {
+            console.log("First useEffect dependencies :");
             const getMemberId = await axios.post(
               "http://localhost:3001/members/retrieve",
               {
@@ -81,13 +82,13 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
     loginWithRedirect,
     user,
     getAccessTokenSilently,
-    loginUserContext,
     navigate,
   ]);
 
   useEffect(() => {
     if (userSelectedNpo && user && user.email) {
       const fetchRoleAndLogin = async () => {
+        console.log("Second useEffect dependencies:");
         const getMemberId = await axios.post(
           "http://localhost:3001/members/retrieve",
           {

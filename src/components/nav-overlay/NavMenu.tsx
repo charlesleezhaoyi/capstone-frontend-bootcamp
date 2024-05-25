@@ -14,7 +14,7 @@ interface InSheetProps {
 }
 
 export const NavMenu: FC<InSheetProps> = (props) => {
-  const { user } = useAuth0();
+  const { userId } = useUser();
   const [npoNameParam, setNpoNameParam] = useState("allNpos"); // Initialize npoIdParam state
 
   const wrapChild = (isWrap: boolean | undefined, children: ReactNode) => {
@@ -28,9 +28,9 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     const getUserNPO = async () => {
       try {
         const response = await axios.post(
-          "http://localhost:3001/npoMembers/getNpoNameByMemberEmail",
+          "http://localhost:3001/npoMembers/getNpoNameByMemberID",
           {
-            email: user?.email,
+            member_id: userId,
           }
         );
         setNpoNameParam(response.data.replace(/\s/g, ""));
@@ -48,7 +48,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     };
 
     getUserNPO();
-  }, [user]);
+  }, []);
 
   return (
     <div
