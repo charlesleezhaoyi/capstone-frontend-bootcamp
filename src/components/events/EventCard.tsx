@@ -40,7 +40,8 @@ export const EventCard: FC<EventProps> = (props) => {
   const [navigateToEventPage, setNavigateToEventPage] =
     useState<boolean>(false);
   const { pathname } = useLocation();
-  const { rsvpToEvent, removeRsvpToEvent } = useEvents();
+  const { rsvpToEvent, removeRsvpToEvent, countRsvpGivenEventId } = useEvents();
+  const [rsvpCount, setRsvpCount] = useState(null);
   const setEventImageToDefault = () => {
     setEventImageElement(defaultEventImage);
   };
@@ -85,6 +86,15 @@ export const EventCard: FC<EventProps> = (props) => {
     } catch (error) {}
   };
 
+  useEffect(() => {
+    const fetchRsvpCount = async () => {
+      const rsvpCount = await countRsvpGivenEventId(id);
+      setRsvpCount(rsvpCount);
+    };
+
+    fetchRsvpCount();
+  }, [id, hasRSVPed, rsvpedEvents, removeRsvpToEvent]);
+
   return (
     <Card>
       {navigateToEventPage && (
@@ -111,7 +121,7 @@ export const EventCard: FC<EventProps> = (props) => {
           </div>
           <div className="mt-3">Where: {location}</div>
           <div className="mt-3">Fee: ${price}</div>
-          <div className="mt-3">Coming: 10 Tentative: 2</div>
+          <div className="mt-3">Coming: {rsvpCount}</div>
         </div>
       </CardContent>
       <CardFooter>

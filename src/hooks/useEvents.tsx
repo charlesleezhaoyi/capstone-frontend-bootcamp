@@ -62,6 +62,17 @@ export const useEvents = () => {
     return fetchedEventData;
   };
 
+  const countRsvpGivenEventId = async (eventId: number) => {
+    const response = await axios.post(
+      process.env.REACT_APP_BACKEND_URL! + "/eventMembers/getRSVPList",
+      {
+        event_id: eventId,
+      }
+    );
+    const rsvpCount = response.data.count;
+    return rsvpCount;
+  };
+
   const rsvpToEvent = async (eventId: number, memberId: number) => {
     const rsvpedEvent = await axios.post(
       process.env.REACT_APP_BACKEND_URL! + "/eventMembers/rsvpEvent",
@@ -101,5 +112,6 @@ export const useEvents = () => {
     removeRsvpToEvent,
     rsvpStatus,
     checkRsvpToEvent,
+    countRsvpGivenEventId,
   };
 };
