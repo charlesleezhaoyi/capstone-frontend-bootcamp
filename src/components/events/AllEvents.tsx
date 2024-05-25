@@ -11,8 +11,12 @@ export const AllEvents: FC = () => {
   const fetchEventsAsync = async () => {
     try {
       const fetchedEvents = await fetchEventsByNpoId();
-      console.log(fetchedEvents);
-      setEvents(fetchedEvents);
+      const currentDate = new Date();
+      const validEvents = fetchedEvents.filter(
+        (event: Event) => new Date(event.date) >= currentDate
+      );
+      console.log(validEvents);
+      setEvents(validEvents);
     } catch (err) {
       console.log(err);
     }
