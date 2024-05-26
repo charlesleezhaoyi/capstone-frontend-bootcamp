@@ -10,12 +10,34 @@ interface Event {
   id: number;
 }
 
+interface Member {
+  id: number;
+  full_name: string;
+  date_of_birth: Date;
+  gender: string;
+  occupation: string;
+  employee_at?: string;
+  email: string;
+  cv_url?: string | undefined;
+  portfolio_link_url?: string | undefined;
+  display_img_url?: string | undefined;
+  is_onboarded: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 interface UserContextType {
   userId: number;
   userRole: number;
   userNpo: number;
   rsvpedEvents: Event[];
-  loginUserContext: (id: number, role: number, npo: number) => void;
+  userInfo: Member | undefined;
+  loginUserContext: (
+    id: number,
+    role: number,
+    npo: number,
+    info?: Member
+  ) => void;
   logoutUserContext: () => void;
   addToRsvpedEvents: (eventId: number) => void;
   removeRsvpedEvents: (eventId: number) => void;
@@ -41,18 +63,40 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
   const [userId, setUserId] = useState<number>(0);
   const [userRole, setUserRole] = useState<number>(0);
   const [userNpo, setUserNpo] = useState<number>(0);
+  const [userInfo, setUserInfo] = useState<Member | undefined>({
+    id: 0,
+    full_name: "",
+    date_of_birth: new Date(),
+    gender: "",
+    occupation: "",
+    employee_at: "",
+    email: "",
+    cv_url: "",
+    portfolio_link_url: "",
+    display_img_url: "",
+    is_onboarded: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
   const [rsvpedEvents, setRsvpedEvents] = useState<Event[]>([]);
 
-  const loginUserContext = (id: number, role: number, npo: number): void => {
+  const loginUserContext = (
+    id: number,
+    role: number,
+    npo: number,
+    info?: Member
+  ): void => {
     setUserId(id);
     setUserRole(role);
     setUserNpo(npo);
+    setUserInfo(info);
   };
 
   const logoutUserContext = (): void => {
     setUserId(0);
     setUserRole(0);
     setUserNpo(0);
+    setUserInfo(undefined);
   };
 
   const addToRsvpedEvents = (eventId: number): void => {
@@ -74,6 +118,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
         userId,
         userRole,
         userNpo,
+        userInfo,
         rsvpedEvents,
         addToRsvpedEvents,
         removeRsvpedEvents,

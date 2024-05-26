@@ -1,3 +1,5 @@
+import { useParams } from "react-router-dom";
+
 interface Npo {
   id: number;
   name: string;
@@ -59,15 +61,19 @@ export interface Member {
 }
 
 export const useMembers = () => {
-  const fetchMembersByNpoId = async (npoId: number) => {
+  const { npo_url_extension } = useParams();
+  const fetchMembersByNpoId = async () => {
+    console.log(
+      process.env.REACT_APP_BACKEND_URL! + "/npoMembers/" + npo_url_extension
+    );
     const fetchedMembers = await fetch(
-      process.env.REACT_APP_BACKEND_URL! + "/npoMembers/" + npoId,
+      process.env.REACT_APP_BACKEND_URL! + "/npoMembers/" + npo_url_extension,
       {
         method: "GET",
       }
     );
     const fetchedMembersData = await fetchedMembers.json();
-
+    console.log(fetchedMembersData);
     return fetchedMembersData;
   };
 
