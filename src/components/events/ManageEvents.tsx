@@ -5,30 +5,26 @@ import {
   EventColumnAttributes,
   EventValue,
 } from "../events/EventControlTable/eventControlColumns";
-import { EventDialog } from "./EventDialog";
+import { UpdateEventDialog } from "./UpdateEventDialog";
+import { CreateEventDialog } from "./CreateEventDialog";
 import { Event } from "../../hooks/useEvents";
 import { useEvents } from "../../hooks/useEvents";
 import { useUser } from "../../UserContext";
 import axios from "axios";
 import { set } from "date-fns";
+import { Button } from "../ui/button";
 
 export default function ManageEvents() {
   const [events, setEvents] = useState<EventColumnAttributes[]>([]);
   const { fetchEventsByNpoId } = useEvents();
-  const [dialogClosed, setDialogClosed] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  // const [updateDialogClosed, setUpdateDialogClosed] = useState(false);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | undefined>(
     undefined
   );
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const { userNpo } = useUser();
   // const [rsvpCount, setRsvpCount] = useState(0);
-
-  useEffect(() => {
-    if (dialogClosed) {
-      fetchEventsAsync();
-      setDialogClosed(false); // Reset the state after fetching the events
-    }
-  }, [dialogClosed]);
 
   const [reload, setReload] = useState(false);
 
@@ -45,16 +41,13 @@ export default function ManageEvents() {
   useEffect(() => {
     fetchEventsAsync(); // Fetch events when the component mounts
 
-    if (dialogClosed) {
-      setDialogClosed(false); // Reset the state after fetching the events
+    if (!updateDialogOpen) {
+      setUpdateDialogOpen(false); // Reset the state after fetching the events
     }
-  }, [dialogClosed, reload]);
-
-  // const fetchRsvpCount = async (eventId: number): Promise<number> => {
-  //   const rsvpCount = await countRsvpGivenEventId(eventId);
-  //   setRsvpCount(rsvpCount);
-  //   return rsvpCount;
-  // };
+    if (!createDialogOpen) {
+      setCreateDialogOpen(false); // Reset the state after fetching the events
+    }
+  }, [updateDialogOpen, reload, createDialogOpen]);
 
   const deleteEvent = async (eventId: number, organiserId: number) => {
     try {
@@ -83,19 +76,34 @@ export default function ManageEvents() {
   return (
     <div className="hidden h-screen flex-1 flex-col space-y-8 p-8 md:flex bg-white">
       <div className="flex items-center justify-between space-y-2">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
-          <p className="text-muted-foreground">
-            Here&apos;s a list of all the events you're organising
-          </p>
+        <div className="flex justify-between items-center w-full">
+          <div>
+            <h2 className="text-2xl font-bold tracking-tight">Welcome back!</h2>
+            <p className="text-muted-foreground">
+              Here&apos;s a list of all the events you're organising
+            </p>
+          </div>
+          <Button
+            className="text-white bg-black"
+            onClick={() => setCreateDialogOpen(true)}
+          >
+            Create
+          </Button>
         </div>
-        <EventDialog
-          npo_id={1}
-          isOpen={dialogOpen}
-          setIsOpen={setDialogOpen}
+        <CreateEventDialog
+          npo_id={userNpo}
+          isOpen={createDialogOpen}
+          setIsOpen={setCreateDialogOpen}
           onDialogClose={() => {
-            setDialogClosed(true);
-            setDialogOpen(false);
+            setCreateDialogOpen(false);
+          }}
+        />
+        <UpdateEventDialog
+          npo_id={userNpo}
+          isOpen={updateDialogOpen}
+          setIsOpen={setUpdateDialogOpen}
+          onDialogClose={() => {
+            setUpdateDialogOpen(false);
             setSelectedEvent(undefined);
           }}
           event={selectedEvent}
@@ -106,15 +114,16 @@ export default function ManageEvents() {
         columns={columns(
           deleteEvent,
           setEvents,
-          setDialogOpen,
+          setUpdateDialogOpen,
           setSelectedEvent
         )}
-        onRowClick={(row) =>
-          setSelectedEvent({ ...row, date: new Date(row.date) })
-        }
+        // onRowClick={(row) =>
+        //   setSelectedEvent({ ...row, date: new Date(row.date) })
+        // }
         deleteEvent={deleteEvent}
         // fetchRsvpCount={fetchRsvpCount}
       />
+      <div className="hidden h-screen flex-1 flex-col space-y-8 p-8 md:flex bg-white max-w-7xl mx-auto"></div>
     </div>
   );
 }

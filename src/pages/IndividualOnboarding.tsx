@@ -49,6 +49,9 @@ const accountFormSchema = z.object({
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;
+type Npo = {
+  name: string;
+};
 
 // Main component
 export const IndividualOnboarding: FC = () => {
@@ -76,6 +79,21 @@ export const IndividualOnboarding: FC = () => {
   const [formData, setFormData] = React.useState<AccountFormValues | null>(
     null
   );
+  const [npos, setNpos] = React.useState<Npo[]>([]);
+
+  useEffect(() => {
+    const fetchNpos = async () => {
+      try {
+        const response = await axios.get("http://localhost:3001/npos/");
+        setNpos(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchNpos();
+  }, []);
 
   const userType = localStorage.getItem("userType");
 
@@ -283,12 +301,20 @@ export const IndividualOnboarding: FC = () => {
                   <FormLabel>
                     What is the name of the NPO you'd like to join
                   </FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Type the name of the NPO you'd like to join (case sensitive & spelling sensitive)"
-                      {...field}
-                    />
-                  </FormControl>
+                  <Select>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select the NPO you'd like to join" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {npos.map((npo) => (
+                        <SelectItem key={npo.name} value={npo.name}>
+                          {npo.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormDescription>
                     Your request to join the community will be sent to the admin
                     and you'll be notified once you're in!

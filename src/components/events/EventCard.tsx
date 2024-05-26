@@ -107,7 +107,7 @@ export const EventCard: FC<EventProps> = (props) => {
           {event_name}
         </CardTitle>
         <CardDescription onClick={() => setNavigateToEventPage(true)}>
-          {event_overview}
+          <div className="h-10">{event_overview}</div>
         </CardDescription>
       </CardHeader>
       <CardContent
