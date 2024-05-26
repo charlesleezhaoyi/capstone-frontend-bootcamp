@@ -120,7 +120,7 @@ export function GenericOnboarding() {
           className="flex flex-col py-2 px-8 mx-auto"
           src={WelcomeImage}
           alt=""
-          style={{ maxWidth: "50%", height: "auto" }}
+          style={{ maxWidth: "20%", height: "auto" }}
         />
         <FormField
           control={form.control}
