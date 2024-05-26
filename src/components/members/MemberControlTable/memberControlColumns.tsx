@@ -3,8 +3,11 @@ import { ColumnDef } from "@tanstack/react-table";
 import { PenLine } from "lucide-react";
 import { type Member } from "@/src/hooks/useMembers";
 import { MemberDialog } from "../MemberDialog";
+import { ImageWithFallback } from "../ImageWithFallback";
+import defaultUserImg from "../../../assets/defaultUser.png";
 
 export type MemberColumnAttributes = {
+  display_pic_url: string | undefined;
   name: string;
   role: string;
   data: Member;
@@ -12,7 +15,23 @@ export type MemberColumnAttributes = {
 };
 
 export const columns: ColumnDef<MemberColumnAttributes>[] = [
-  { accessorKey: "name", header: "Name" },
+  {
+    id: "name",
+    header: "Name",
+    cell: ({ row }) => {
+      return (
+        <div>
+          <ImageWithFallback
+            src={row.original.display_pic_url}
+            alt="navbar profile"
+            fallback={defaultUserImg}
+            className="h-8 w-8 inline-block mr-3"
+          />
+          <span>{row.original.name}</span>
+        </div>
+      );
+    },
+  },
   {
     accessorKey: "role",
     header: () => <div className="text-right">Role</div>,
