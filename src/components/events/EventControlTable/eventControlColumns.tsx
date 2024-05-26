@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { EventDialog } from "../EventDialog";
+import { UpdateEventDialog } from "../UpdateEventDialog";
 import { useState, Dispatch, SetStateAction } from "react";
 import { Event } from "../../../hooks/useEvents";
 
@@ -46,7 +46,7 @@ type EventActionsCellProps = {
   event: EventColumnAttributes;
   deleteEvent: (id: number, organiserId: number) => Promise<void>;
   eventObjectSetter: React.Dispatch<React.SetStateAction<Event[]>>;
-  setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setUpdateDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setSelectedEvent: React.Dispatch<React.SetStateAction<Event | undefined>>;
 };
 
@@ -54,7 +54,8 @@ const EventActionsCell: React.FC<EventActionsCellProps> = ({
   event,
   deleteEvent,
   eventObjectSetter,
-  setDialogOpen,
+  setUpdateDialogOpen,
+  setSelectedEvent,
 }) => {
   return (
     <DropdownMenu>
@@ -71,7 +72,8 @@ const EventActionsCell: React.FC<EventActionsCellProps> = ({
         <DropdownMenuItem
           onClick={() => {
             console.log("Update Event Details clicked");
-            setDialogOpen(true);
+            setSelectedEvent(event);
+            setUpdateDialogOpen(true);
           }}
         >
           Update Event Details
@@ -136,7 +138,7 @@ export const columns = (
           event={event}
           deleteEvent={deleteEvent}
           eventObjectSetter={eventObjectSetter}
-          setDialogOpen={setDialogOpen}
+          setUpdateDialogOpen={setDialogOpen}
           setSelectedEvent={setSelectedEvent}
         />
       );

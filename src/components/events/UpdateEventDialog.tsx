@@ -1,4 +1,4 @@
-import React, { FC, useState, ReactNode } from "react";
+import React, { FC, useState, ReactNode, useEffect } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -35,7 +35,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseApp } from "../../firebase";
 import { isKeyObject } from "util/types";
 
-interface EventDialogProps {
+interface UpdateEventDialogProps {
   npo_id: number;
   onDialogClose: () => void;
   eventObjectSetter?: React.Dispatch<React.SetStateAction<Event[]>>;
@@ -43,7 +43,7 @@ interface EventDialogProps {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
-export const EventDialog: FC<EventDialogProps> = ({
+export const UpdateEventDialog: FC<UpdateEventDialogProps> = ({
   npo_id,
   onDialogClose,
   eventObjectSetter,
@@ -77,6 +77,19 @@ export const EventDialog: FC<EventDialogProps> = ({
   const storage = getStorage(firebaseApp);
   const [previewURL, setPreviewURL] = useState<string | null>(null);
 
+  useEffect(() => {
+    form.reset({
+      organiser_id: newEventData?.organiser_id?.toString() || "", // Convert to string
+      event_photo_url: undefined,
+      event_name: newEventData?.event_name || "",
+      event_overview: newEventData?.event_overview || "",
+      date: newEventData?.date?.toString() || "", // Convert to string
+      time: newEventData?.time || "",
+      location: newEventData?.location || "",
+      price: newEventData?.price?.toString() || "", // Convert to string
+    });
+  }, [newEventData]);
+
   const handleImagePreview = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -105,17 +118,35 @@ export const EventDialog: FC<EventDialogProps> = ({
     price: z.string(),
   });
 
+  useEffect(() => {
+    const fetchSpecificEvent = async (id: number) => {
+      try {
+        if (id) {
+          const fetchedEventData = await fetchEventById(id);
+          setNewEventData(fetchedEventData);
+          console.log(newEventData);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    if (event?.id) {
+      fetchSpecificEvent(event.id);
+    }
+  }, [event?.id]);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      organiser_id: "",
+      organiser_id: newEventData?.organiser_id?.toString() || "", // Convert to string
       event_photo_url: undefined,
-      event_name: "",
-      event_overview: "",
-      date: "",
-      time: "",
-      location: "",
-      price: "",
+      event_name: newEventData?.event_name || "",
+      event_overview: newEventData?.event_overview || "",
+      date: newEventData?.date?.toString() || "", // Convert to string
+      time: newEventData?.time || "",
+      location: newEventData?.location || "",
+      price: newEventData?.price?.toString() || "", // Convert to string
     },
   });
 
@@ -128,6 +159,7 @@ export const EventDialog: FC<EventDialogProps> = ({
       if (eventObjectSetter) {
         eventObjectSetter(fetchedData);
       }
+      console.log(fetchedData);
     } catch (err) {
       console.log(err);
     }
@@ -155,7 +187,7 @@ export const EventDialog: FC<EventDialogProps> = ({
 
     try {
       let response;
-      console.log("button click");
+      console.log(event);
       if (event) {
         // If an event was passed in, update the existing event
         console.log(newEventData);
@@ -163,41 +195,14 @@ export const EventDialog: FC<EventDialogProps> = ({
           `http://localhost:3001/npoEvents/${userNpo}/`,
           newEventData
         );
-        // form.reset({
-        //   organiser_id: event.organiser_id ? event.organiser_id.toString() : "",
-        //   event_photo_url: undefined,
-        //   event_name: event.event_name || "",
-        //   event_overview: event.event_overview || "",
-        //   date: event.date ? new Date(event.date).toISOString() : "",
-        //   time: event.time || "",
-        //   location: event.location || "",
-        //   price: event.price ? event.price.toString() : "",
-        // });
+        form.reset();
         setPreviewURL(null);
       } else {
-        // If no event was passed in, create a new event
-        response = await axios.post(
-          `http://localhost:3001/npoEvents/${userNpo}`,
-          newEventData
-        );
-        // form.reset({
-        //   organiser_id: "",
-        //   event_photo_url: undefined,
-        //   event_name: "",
-        //   event_overview: "",
-        //   date: "",
-        //   time: "",
-        //   location: "",
-        //   price: "",
-        // });
-        // setPreviewURL(null);
       }
 
       toast({
         title: "Success!",
-        description: `Event has been ${
-          event ? "updated" : "created"
-        } successfully. Response code: ${response.status}`,
+        description: `Event has been updated successfully. Response code: ${response?.status}`,
       });
 
       onDialogClose();
@@ -212,12 +217,6 @@ export const EventDialog: FC<EventDialogProps> = ({
 
   return (
     <div>
-      <Button
-        className="text-white w-sm text-md rounded-lg"
-        onClick={() => setIsOpen(true)}
-      >
-        Create
-      </Button>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger className="text-primary flex justify-end w-full"></DialogTrigger>
         <DialogContent closeButton={false}>
@@ -227,6 +226,8 @@ export const EventDialog: FC<EventDialogProps> = ({
               <div className="h-24 overflow-hidden rounded-md flex flex-row items-center justify-center">
                 {previewURL ? (
                   <img src={previewURL} alt="Event Preview" />
+                ) : newEventData?.event_photo_url ? (
+                  <img src={newEventData.event_photo_url} alt="Event" />
                 ) : (
                   eventImageElement
                 )}
@@ -374,7 +375,7 @@ export const EventDialog: FC<EventDialogProps> = ({
               </div>
               <div className="flex gap-4 justify-center w-full">
                 <Button className="text-white md:w-20 w-14" type="submit">
-                  {event ? "Update" : "Create"}
+                  Submit
                 </Button>
                 <DialogClose
                   className="text-black md:w-20 w-14"
