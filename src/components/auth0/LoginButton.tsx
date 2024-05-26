@@ -25,7 +25,7 @@ const LoginButton = ({ npo_name }: { npo_name: string }) => {
               email: user.email,
             }
           );
-          loginUserContext(memberInfo.data.data.id, 0, 0);
+          loginUserContext(memberInfo.data.data.id, 0, 0, "");
           const npos = await axios.post("http://localhost:3001/npoMembers/", {
             member_id: memberInfo.data.data.id,
           });
