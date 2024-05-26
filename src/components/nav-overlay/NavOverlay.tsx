@@ -104,10 +104,10 @@ export const Nav: FC = () => {
         {desktopHeader}
       </header>
       <main className="flex flex-row h-full overflow-hidden">
-        <div className="hidden md:flex flex-col p-6 w-[30%] max-w-[300px] border-t-2 border-secondary">
+        <div className="hidden md:flex flex-col p-6 w-[300px] border-t-2 border-secondary">
           <NavMenu />
         </div>
-        <div className="flex-grow overflow-scroll border-t-2 border-secondary">
+        <div className="w-[calc(100%-300px)] overflow-scroll border-t-2 border-secondary">
           <Outlet />
         </div>
       </main>
