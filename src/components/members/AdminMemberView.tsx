@@ -29,6 +29,7 @@ export const AdminMemberView: FC = () => {
       return [];
     }
     const outputData = inputData.map((member) => ({
+      display_pic_url: member.display_img_url,
       name: member.full_name,
       role: member.npoMembers[0].roles.name,
       data: member,

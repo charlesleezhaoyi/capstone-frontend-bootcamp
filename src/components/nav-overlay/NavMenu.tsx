@@ -15,7 +15,7 @@ interface InSheetProps {
 }
 
 export const NavMenu: FC<InSheetProps> = (props) => {
-  const { userId } = useUser();
+  const { userId, userNpo } = useUser();
   const [npoNameParam, setNpoNameParam] = useState("allNpos"); // Initialize npoIdParam state
   const { npo_url_extension } = useParams();
 
@@ -37,7 +37,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
             member_id: userId,
           }
         );
-        setNpoNameParam(response.data.replace(/\s/g, ""));
+        setNpoNameParam(response.data.replace(/\s/g, "").toLowerCase());
         console.log(response.data);
       } catch (error: any) {
         if (
@@ -61,7 +61,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
       }`}
     >
       <NavLink
-        to={`/${npo_url_extension}/events`}
+        to={`/${npoNameParam}/events`}
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""
@@ -77,7 +77,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
         )}
       </NavLink>
       <NavLink
-        to={`/${npo_url_extension}/members`}
+        to={`/${npoNameParam}/members`}
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""

@@ -19,15 +19,15 @@ const LoginButton = ({ npo_name }: { npo_name: string }) => {
     try {
       if (isAuthenticated) {
         if (user && user.email && user.email_verified) {
-          const getMemberId = await axios.post(
+          const memberInfo = await axios.post(
             "http://localhost:3001/members/retrieve",
             {
               email: user.email,
             }
           );
-          loginUserContext(getMemberId.data.data, 0, 0);
+          loginUserContext(memberInfo.data.data.id, 0, 0);
           const npos = await axios.post("http://localhost:3001/npoMembers/", {
-            member_id: getMemberId.data.data,
+            member_id: memberInfo.data.data.id,
           });
           if (npos.data.length > 1) {
             //NPOSelectionDialog is not tested
@@ -36,14 +36,15 @@ const LoginButton = ({ npo_name }: { npo_name: string }) => {
             const role = await axios.post(
               "http://localhost:3001/npoMembers/getNpoMemberRole",
               {
-                member_id: getMemberId.data.data,
+                member_id: memberInfo.data.data.id,
                 npo_id: npos.data[0].npo_id,
               }
             );
             loginUserContext(
-              getMemberId.data.data,
+              memberInfo.data.data.id,
               role.data[0].role_id,
-              npos.data[0].npo_id
+              npos.data[0].npo_id,
+              memberInfo.data.data
             );
           }
         }

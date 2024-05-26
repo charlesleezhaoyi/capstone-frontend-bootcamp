@@ -11,7 +11,6 @@ import { Nav } from "./components/nav-overlay/NavOverlay";
 import { Events } from "./pages/Events";
 import { EventPage } from "./pages/EventPage";
 import { Members } from "./pages/Members";
-import { Discussions } from "./pages/Discussions";
 import { GenericOnboarding } from "./pages/GenericOnboarding";
 import { CorporateOnboarding } from "./pages/CorporateOnboarding";
 import { IndividualOnboarding } from "./pages/IndividualOnboarding";
@@ -48,7 +47,8 @@ function App() {
               </AuthWrapper>
             }
           />
-          <Route path=":npo_url_extension/*" element={<Home />} />
+          <Route path=":npo_url_extension/home" element={<Home />} />
+          <Route path=":npo_url_extension/*" element={<Navigate to="home" />} />
           <Route path="public-onboarding" element={<GenericOnboarding />} />
           <Route
             path="individual-onboarding"
