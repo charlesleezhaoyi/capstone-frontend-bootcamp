@@ -8,6 +8,7 @@ import { SquareUserRound } from "lucide-react";
 import { useAuth0 } from "@auth0/auth0-react";
 import axios from "axios";
 import { useUser } from "../../UserContext";
+import { useParams } from "react-router-dom";
 
 interface InSheetProps {
   inSheet?: boolean;
@@ -16,6 +17,7 @@ interface InSheetProps {
 export const NavMenu: FC<InSheetProps> = (props) => {
   const { userId } = useUser();
   const [npoNameParam, setNpoNameParam] = useState("allNpos"); // Initialize npoIdParam state
+  const { npo_url_extension } = useParams();
 
   const wrapChild = (isWrap: boolean | undefined, children: ReactNode) => {
     if (isWrap) {
@@ -25,6 +27,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
   };
 
   useEffect(() => {
+    console.log(npo_url_extension);
     const getUserNPO = async () => {
       try {
         const response = await axios.post(
@@ -57,7 +60,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
       }`}
     >
       <NavLink
-        to={`/${npoNameParam}/events`}
+        to={`/${npo_url_extension}/events`}
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""
@@ -73,7 +76,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
         )}
       </NavLink>
       <NavLink
-        to="members"
+        to={`/${npo_url_extension}/members`}
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""

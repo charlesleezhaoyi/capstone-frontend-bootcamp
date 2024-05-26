@@ -13,7 +13,7 @@ export const AdminMemberView: FC = () => {
 
   const fetchMembersAsync = async () => {
     try {
-      const fetchedData = await fetchMembersByNpoId(1);
+      const fetchedData = await fetchMembersByNpoId();
       setNpoMembers(fetchedData);
     } catch (err) {
       console.log(err);
