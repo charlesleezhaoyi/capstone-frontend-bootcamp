@@ -36,7 +36,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
                 email: user.email,
               }
             );
-            loginUserContext(memberInfo.data.data.id, 0, 0, "");
+            loginUserContext(memberInfo.data.data.id, 0, 0);
             const npos = await axios.post("http://localhost:3001/npoMembers/", {
               member_id: memberInfo.data.data.id,
             });
