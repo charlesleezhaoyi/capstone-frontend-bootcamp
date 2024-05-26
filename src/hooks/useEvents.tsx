@@ -31,6 +31,22 @@ export interface Event {
   organiser: Member;
 }
 
+export interface EventMembers {
+  id: number;
+  organiser_id: number;
+  npo_id: number;
+  event_overview: string;
+  event_name: string;
+  event_photo_url: string;
+  date: Date;
+  time: string;
+  location: string;
+  price: number;
+  createdAt: Date;
+  updatedAt: Date;
+  members: Member;
+}
+
 export const useEvents = () => {
   const { userNpo } = useUser();
   const [rsvpStatus, setRsvpStatus] = useState<Record<number, boolean>>({});
@@ -61,6 +77,21 @@ export const useEvents = () => {
     const fetchedEventData = await fetchedEvent.json();
     console.log(fetchedEventData);
     return fetchedEventData;
+  };
+
+  const fetchEventAttendeesById = async (eventId: number) => {
+    const fetchedEventAttendees = await fetch(
+      process.env.REACT_APP_BACKEND_URL! +
+        "/npoEvents/" +
+        eventId +
+        "/attendees",
+      {
+        method: "GET",
+      }
+    );
+    const fetchedEventAttendeesData = await fetchedEventAttendees.json();
+    console.log(fetchedEventAttendeesData);
+    return fetchedEventAttendeesData;
   };
 
   const countRsvpGivenEventId = async (eventId: number) => {
@@ -108,6 +139,7 @@ export const useEvents = () => {
 
   return {
     fetchEventById,
+    fetchEventAttendeesById,
     fetchEventsByNpoId,
     rsvpToEvent,
     removeRsvpToEvent,
