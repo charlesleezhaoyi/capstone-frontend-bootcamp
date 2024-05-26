@@ -35,7 +35,6 @@ export const useEvents = () => {
   const { userNpo } = useUser();
   const [rsvpStatus, setRsvpStatus] = useState<Record<number, boolean>>({});
   const fetchEventsByNpoId = async () => {
-    // Not working on initial render
     if (userNpo) {
       const fetchedEvents = await fetch(
         process.env.REACT_APP_BACKEND_URL! +
@@ -47,6 +46,7 @@ export const useEvents = () => {
         }
       );
       const fetchedEventsData = await fetchedEvents.json();
+      console.log(fetchedEventsData);
       return fetchedEventsData;
     }
   };
@@ -59,6 +59,7 @@ export const useEvents = () => {
       }
     );
     const fetchedEventData = await fetchedEvent.json();
+    console.log(fetchedEventData);
     return fetchedEventData;
   };
 

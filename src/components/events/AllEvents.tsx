@@ -24,7 +24,7 @@ export const AllEvents: FC = () => {
 
   useEffect(() => {
     fetchEventsAsync();
-  }, []);
+  }, [userNpo]);
 
   const eventCards = Array.isArray(events)
     ? events.map((event: Event) => <EventCard key={event.id} event={event} />)

@@ -30,6 +30,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     console.log(npo_url_extension);
     const getUserNPO = async () => {
       try {
+        console.log(userId);
         const response = await axios.post(
           "http://localhost:3001/npoMembers/getNpoNameByMemberID",
           {
@@ -51,7 +52,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
     };
 
     getUserNPO();
-  }, []);
+  }, [userId]);
 
   return (
     <div
