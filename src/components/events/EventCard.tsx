@@ -60,7 +60,9 @@ export const EventCard: FC<EventProps> = (props) => {
     }
   };
 
-  useEffect(() => loadEventImageElement(), []);
+  useEffect(() => {
+    loadEventImageElement();
+  }, []);
 
   const checkPathBeforeAppend = (path: string) => {
     const lastChar = path[path.length - 1];
