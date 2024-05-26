@@ -14,9 +14,11 @@ export const AdminMemberView: FC = () => {
   const fetchMembersAsync = async () => {
     try {
       const fetchedData = await fetchMembersByNpoId();
-      setNpoMembers(fetchedData);
+      console.log(fetchedData);
+      setNpoMembers(Array.isArray(fetchedData) ? fetchedData : []);
     } catch (err) {
       console.log(err);
+      setNpoMembers([]);
     }
   };
 
@@ -24,7 +26,7 @@ export const AdminMemberView: FC = () => {
     fetchMembersAsync();
   }, []);
 
-  const filterData = (inputData: Member[]): MemberColumnAttributes[] => {
+  const filterData = (inputData: Member[] = []): MemberColumnAttributes[] => {
     if (!inputData) {
       return [];
     }
