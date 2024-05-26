@@ -111,7 +111,7 @@ export const IndividualOnboarding: FC = () => {
           email: user.email,
         }
       );
-      const member_id = parseInt(response.data.data, 10);
+      const member_id = parseInt(response.data.data.id, 10);
       if (userType === "corporate") {
         const npo_name = localStorage.getItem("npo_name");
         console.log(npo_name);
