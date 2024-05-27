@@ -282,7 +282,7 @@ export function CorporateOnboarding() {
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="What does your company do?" />
+                    <SelectValue placeholder="Where is your company headquartered?" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useUser } from "../../UserContext";
 import { MemberControlTable } from "./MemberControlTable/MemberControlTable";
 import {
   MemberColumnAttributes,
@@ -11,10 +12,11 @@ export const AdminMemberView: FC = () => {
 
   const { fetchMembersByNpoId } = useMembers();
 
+  const { userNpo } = useUser();
+
   const fetchMembersAsync = async () => {
     try {
       const fetchedData = await fetchMembersByNpoId();
-      console.log(fetchedData);
       setNpoMembers(Array.isArray(fetchedData) ? fetchedData : []);
     } catch (err) {
       console.log(err);
@@ -24,7 +26,7 @@ export const AdminMemberView: FC = () => {
 
   useEffect(() => {
     fetchMembersAsync();
-  }, []);
+  }, [userNpo]);
 
   const filterData = (inputData: Member[] = []): MemberColumnAttributes[] => {
     if (!inputData) {
