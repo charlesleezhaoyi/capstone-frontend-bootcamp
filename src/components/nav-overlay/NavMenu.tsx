@@ -17,6 +17,7 @@ interface InSheetProps {
 export const NavMenu: FC<InSheetProps> = (props) => {
   const { userId } = useUser();
   const [npoNameParam, setNpoNameParam] = useState("allNpos"); // Initialize npoIdParam state
+  const { npo_url_extension } = useParams();
 
   const wrapChild = (isWrap: boolean | undefined, children: ReactNode) => {
     if (isWrap) {
@@ -74,7 +75,7 @@ export const NavMenu: FC<InSheetProps> = (props) => {
         )}
       </NavLink>
       <NavLink
-        to={`/${npoNameParam}/members`}
+        to={`/${npo_url_extension}/members`}
         className={({ isActive }) =>
           `flex transition-all text-secondary text-2xl font-semibold hover:text-primary rounded-lg px-3 py-1 ${
             isActive ? "text-secondary-foreground bg-secondary-background" : ""

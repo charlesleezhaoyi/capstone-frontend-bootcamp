@@ -63,9 +63,6 @@ export interface Member {
 export const useMembers = () => {
   const { npo_url_extension } = useParams();
   const fetchMembersByNpoId = async () => {
-    console.log(
-      process.env.REACT_APP_BACKEND_URL! + "/npoMembers/" + npo_url_extension
-    );
     const fetchedMembers = await fetch(
       process.env.REACT_APP_BACKEND_URL! + "/npoMembers/" + npo_url_extension,
       {

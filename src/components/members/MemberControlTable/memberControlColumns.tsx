@@ -25,7 +25,7 @@ export const columns: ColumnDef<MemberColumnAttributes>[] = [
             src={row.original.display_pic_url}
             alt="navbar profile"
             fallback={defaultUserImg}
-            className="h-8 w-8 inline-block mr-3"
+            className="h-8 w-8 inline-block mr-3 rounded-md"
           />
           <span>{row.original.name}</span>
         </div>
