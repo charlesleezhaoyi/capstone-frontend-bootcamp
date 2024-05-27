@@ -30,12 +30,14 @@ interface UserContextType {
   userId: number;
   userRole: number;
   userNpo: number;
+  // userNpoName: string;
   rsvpedEvents: Event[];
   userInfo: Member | undefined;
   loginUserContext: (
     id: number,
     role: number,
     npo: number,
+    // npoName: string,
     info?: Member
   ) => void;
   logoutUserContext: () => void;
@@ -63,6 +65,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
   const [userId, setUserId] = useState<number>(0);
   const [userRole, setUserRole] = useState<number>(0);
   const [userNpo, setUserNpo] = useState<number>(0);
+  // const [userNpoName, setUserNpoName] = useState<string>("");
   const [userInfo, setUserInfo] = useState<Member | undefined>({
     id: 0,
     full_name: "",
@@ -84,11 +87,13 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
     id: number,
     role: number,
     npo: number,
+    // npoName: string,
     info?: Member
   ): void => {
     setUserId(id);
     setUserRole(role);
     setUserNpo(npo);
+    // setUserNpoName(npoName);
     setUserInfo(info);
   };
 
@@ -96,6 +101,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
     setUserId(0);
     setUserRole(0);
     setUserNpo(0);
+    // setUserNpoName("");
     setUserInfo(undefined);
   };
 
@@ -118,6 +124,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
         userId,
         userRole,
         userNpo,
+        // userNpoName,
         userInfo,
         rsvpedEvents,
         addToRsvpedEvents,

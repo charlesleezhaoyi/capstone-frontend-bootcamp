@@ -154,6 +154,7 @@ export const IndividualOnboarding: FC = () => {
           role_id: 1,
         });
       } else if (userType === "individual") {
+        const npo_name = localStorage.getItem("npo_name");
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
           npo_name: npo_name,
           member_id: member_id,

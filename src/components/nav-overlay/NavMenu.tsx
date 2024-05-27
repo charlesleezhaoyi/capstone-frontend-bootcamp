@@ -15,9 +15,8 @@ interface InSheetProps {
 }
 
 export const NavMenu: FC<InSheetProps> = (props) => {
-  const { userId, userNpo } = useUser();
+  const { userId } = useUser();
   const [npoNameParam, setNpoNameParam] = useState("allNpos"); // Initialize npoIdParam state
-  const { npo_url_extension } = useParams();
 
   const wrapChild = (isWrap: boolean | undefined, children: ReactNode) => {
     if (isWrap) {
@@ -27,7 +26,6 @@ export const NavMenu: FC<InSheetProps> = (props) => {
   };
 
   useEffect(() => {
-    console.log(npo_url_extension);
     const getUserNPO = async () => {
       try {
         console.log(userId);
@@ -38,7 +36,6 @@ export const NavMenu: FC<InSheetProps> = (props) => {
           }
         );
         setNpoNameParam(response.data.replace(/\s/g, "").toLowerCase());
-        console.log(response.data);
       } catch (error: any) {
         if (
           error.response &&

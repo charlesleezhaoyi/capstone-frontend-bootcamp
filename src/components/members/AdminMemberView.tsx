@@ -41,7 +41,7 @@ export const AdminMemberView: FC = () => {
   };
 
   return (
-    <div className="bg-gray-500 w-full min-h-full h-fit items-start p-10 ">
+    <div className="bg-gray-200 w-full min-h-full h-fit items-start p-10 ">
       <MemberControlTable columns={columns} data={filterData(npoMembers)} />
     </div>
   );

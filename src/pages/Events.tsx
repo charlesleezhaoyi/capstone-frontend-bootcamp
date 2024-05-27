@@ -21,7 +21,7 @@ export const Events: FC = () => {
   const { userRole } = useUser();
 
   return (
-    <div className="bg-gray-500 w-full min-h-full">
+    <div className="bg-gray-200 w-full min-h-full">
       <Tabs defaultValue="all">
         <TabsList className="sticky top-0 bg-white p-3 h-fit w-full rounded-none justify-start">
           <TabsTrigger
