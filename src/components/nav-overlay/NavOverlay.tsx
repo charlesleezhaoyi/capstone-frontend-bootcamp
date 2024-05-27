@@ -26,32 +26,11 @@ export const Nav: FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth0();
   const { userId, userInfo } = useUser();
-  const [profileBubble, setProfileBubble] = useState<
-    React.ReactNode | undefined
-  >(undefined);
   const handleClick = () => {
     navigate("/public-onboarding");
   };
 
-  useEffect(() => {
-    setProfileBubble(
-      <DropdownMenu>
-        <DropdownMenuTrigger>
-          <ImageWithFallback
-            src={userInfo?.display_img_url}
-            alt="navbar profile"
-            fallback={defaultUserImg}
-            className="h-8 w-8"
-          />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <div className="px-2">Hi {userInfo?.full_name}</div>
-          <DropdownMenuItem onClick={() => logout()}>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-    console.log(userInfo);
-  }, [userInfo]);
+  useEffect(() => console.log("NavOverlay rendered"));
 
   const mobileHeader = (
     <nav className="flex flex-row justify-between items-center md:hidden">
@@ -91,7 +70,30 @@ export const Nav: FC = () => {
       <h3 className="hidden md:flex">GoodHub SEA</h3>
       <div className="flex flex-row items-center">
         {isAuthenticated ? (
-          profileBubble
+          <DropdownMenu>
+            <DropdownMenuTrigger>
+              {userInfo?.display_img_url ? (
+                <img
+                  src={userInfo?.display_img_url}
+                  className="h-8 w-8 rounded-lg"
+                  alt="navbar profile"
+                />
+              ) : (
+                <ImageWithFallback
+                  src={userInfo?.display_img_url}
+                  alt="navbar profile"
+                  fallback={defaultUserImg}
+                  className="h-8 w-8"
+                />
+              )}
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <div className="px-2">Hi {userInfo?.full_name}</div>
+              <DropdownMenuItem onClick={() => logout()}>
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         ) : (
           <>
             <LoginButton npo_name={npo_name ?? ""}></LoginButton>
@@ -116,7 +118,7 @@ export const Nav: FC = () => {
       <main className="flex flex-row h-full overflow-hidden">
         <div className="hidden md:flex flex-col p-6 w-[300px] border-t-2 border-secondary">
           <NavMenu />
-          {isAuthenticated && <LogoutButton />}
+          {/* {isAuthenticated && <LogoutButton />} */}
         </div>
         <div className="w-[calc(100%-300px)] border-t-2 border-secondary overflow-auto">
           <Outlet />

@@ -83,14 +83,14 @@ export const IndividualOnboarding: FC = () => {
 
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
-  const [userEmail, setUserEmail] = React.useState<string>("");
-  const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
+  // const [userEmail, setUserEmail] = React.useState<string>("");
+  // const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
   const { toast } = useToast();
-  const [formData, setFormData] = React.useState<AccountFormValues | null>(
-    null
-  );
+  // const [formData, setFormData] = React.useState<AccountFormValues | null>(
+  //   null
+  // );
   const [npos, setNpos] = React.useState<Npo[]>([]);
-  const { userId } = useUser();
+  // const { userId } = useUser();
 
   useEffect(() => {
     const fetchNpos = async () => {
@@ -249,6 +249,27 @@ export const IndividualOnboarding: FC = () => {
             </FormItem>
           )}
         />
+        {/* Profile Img field */}
+        <FormField
+          control={form.control}
+          name="display_img"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Profile Image (Optional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  placeholder="Upload a profile image"
+                  {...fileRef}
+                />
+              </FormControl>
+              <FormDescription>
+                Upload a pic of yourself for us to know you better!
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* Date of Birth field */}
         <FormField
           control={form.control}
@@ -402,26 +423,6 @@ export const IndividualOnboarding: FC = () => {
                   </FormControl>
                   <FormDescription>
                     Share the link to your portfolio for us to find out more!
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="display_img"
-              render={({ field }) => (
-                <FormItem className="flex flex-col py-2 px-8">
-                  <FormLabel>Profile Image (Optional)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      placeholder="Upload a profile image"
-                      {...fileRef}
-                    />
-                  </FormControl>
-                  <FormDescription>
-                    Upload a pic of yourself for us to know you better!
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
