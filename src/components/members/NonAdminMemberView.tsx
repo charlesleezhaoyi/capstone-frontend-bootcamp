@@ -25,7 +25,7 @@ export const NonAdminMemberView: FC = () => {
   ));
 
   return (
-    <div className="bg-gray-500 w-full min-h-full h-fit items-start grid lg:gap-8 lg:p-8 md:grid-cols-3 md:gap-4 md:p-4 sm:grid-cols-2 grid-cols-1 gap-10 p-10 ">
+    <div className="bg-gray-200 w-full min-h-full h-fit items-start grid lg:gap-8 lg:p-8 md:grid-cols-3 md:gap-4 md:p-4 sm:grid-cols-2 grid-cols-1 gap-10 p-10 ">
       {memberCards}
     </div>
   );

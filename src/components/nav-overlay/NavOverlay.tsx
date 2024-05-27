@@ -11,6 +11,7 @@ import { Sheet, SheetTrigger, SheetContent } from "../ui/sheet";
 import { Button } from "../ui/button";
 import { Menu, CircleUserRound } from "lucide-react";
 import LoginButton from "../auth0/LoginButton";
+import LogoutButton from "../auth0/LogoutButton";
 import { useNavigate, useParams } from "react-router-dom";
 import { ImageWithFallback } from "../members/ImageWithFallback";
 import defaultUserImg from "../../assets/defaultUser.png";
@@ -63,7 +64,7 @@ export const Nav: FC = () => {
 
   const desktopHeader = (
     <nav className="hidden md:flex flex-row justify-between items-center px-5">
-      <h3 className="hidden md:flex">OUR PRODUCT NAME</h3>
+      <h3 className="hidden md:flex">GoodHub SEA</h3>
       <div className="flex flex-row items-center">
         {isAuthenticated ? (
           <DropdownMenu>
@@ -104,10 +105,11 @@ export const Nav: FC = () => {
         {desktopHeader}
       </header>
       <main className="flex flex-row h-full overflow-hidden">
-        <div className="hidden md:flex flex-col p-6 w-[30%] max-w-[300px] border-t-2 border-secondary">
+        <div className="hidden md:flex flex-col p-6 w-[300px] border-t-2 border-secondary">
           <NavMenu />
+          {isAuthenticated && <LogoutButton />}
         </div>
-        <div className="flex-grow overflow-scroll border-t-2 border-secondary">
+        <div className="w-[calc(100%-300px)] border-t-2 border-secondary overflow-auto">
           <Outlet />
         </div>
       </main>
