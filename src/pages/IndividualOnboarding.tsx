@@ -35,6 +35,9 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 import { User, useAuth0 } from "@auth0/auth0-react";
 import VerifyEmailButton from "../components/auth0/VerifyEmailButton";
+import { useUser } from "../UserContext";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { firebaseApp } from "../firebase";
 
 const accountFormSchema = z.object({
   full_name: z.string({ required_error: "A name is required." }),
@@ -45,6 +48,12 @@ const accountFormSchema = z.object({
   portfolio_link_url: z.string({
     required_error: "Please enter a portfolio URL.",
   }),
+  display_img: z
+    .instanceof(FileList)
+    .refine(
+      (file) => file?.length === 1,
+      "Profile photos are highly encouraged"
+    ),
   npo_name: z.string({ required_error: "Please enter the name of the NPO" }),
 });
 
@@ -64,6 +73,7 @@ export const IndividualOnboarding: FC = () => {
       company: "",
       cv_url: "",
       portfolio_link_url: "",
+      display_img: undefined,
       npo_name: "",
     },
     mode: "all",
@@ -73,20 +83,20 @@ export const IndividualOnboarding: FC = () => {
 
   const navigate = useNavigate();
   const { user, isLoading, isAuthenticated, loginWithRedirect } = useAuth0();
-  const [userEmail, setUserEmail] = React.useState<string>("");
-  const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
+  // const [userEmail, setUserEmail] = React.useState<string>("");
+  // const [sentVerifyEmail, setSentVerifyEmail] = React.useState<boolean>(false);
   const { toast } = useToast();
-  const [formData, setFormData] = React.useState<AccountFormValues | null>(
-    null
-  );
+  // const [formData, setFormData] = React.useState<AccountFormValues | null>(
+  //   null
+  // );
   const [npos, setNpos] = React.useState<Npo[]>([]);
+  // const { userId } = useUser();
 
   useEffect(() => {
     const fetchNpos = async () => {
       try {
         const response = await axios.get("http://localhost:3001/npos/");
         setNpos(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error(error);
       }
@@ -95,7 +105,11 @@ export const IndividualOnboarding: FC = () => {
     fetchNpos();
   }, []);
 
+  const storage = getStorage(firebaseApp);
+
   const userType = localStorage.getItem("userType");
+
+  const fileRef = form.register("display_img");
 
   const submitForm = async (
     full_name: string,
@@ -104,6 +118,7 @@ export const IndividualOnboarding: FC = () => {
     company: string,
     cv_url: string,
     portfolio_link_url: string,
+    display_img_url: string,
     userType: string,
     npo_name: string | undefined
   ) => {
@@ -121,6 +136,7 @@ export const IndividualOnboarding: FC = () => {
         employee_at: company,
         cv_url: cv_url,
         portfolio_link_url: portfolio_link_url,
+        display_img_url: display_img_url,
         is_onboarded: true,
       });
       const response = await axios.post(
@@ -132,8 +148,6 @@ export const IndividualOnboarding: FC = () => {
       const member_id = parseInt(response.data.data.id, 10);
       if (userType === "corporate") {
         const npo_name = localStorage.getItem("npo_name");
-        console.log(npo_name);
-        console.log(member_id);
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
           npo_name: npo_name,
           member_id: member_id,
@@ -141,7 +155,6 @@ export const IndividualOnboarding: FC = () => {
         });
       } else if (userType === "individual") {
         const npo_name = localStorage.getItem("npo_name");
-        console.log(member_id);
         await axios.post(`http://localhost:3001/npoMembers/assignNpo`, {
           npo_name: npo_name,
           member_id: member_id,
@@ -163,6 +176,7 @@ export const IndividualOnboarding: FC = () => {
       company,
       cv_url,
       portfolio_link_url,
+      display_img,
       npo_name,
     } = data;
     try {
@@ -177,6 +191,17 @@ export const IndividualOnboarding: FC = () => {
         });
         return;
       }
+
+      const eventImageRef = ref(
+        storage,
+        `images/user/profile/${display_img[0].name}`
+      );
+      const uploadTaskSnapshot = await uploadBytes(
+        eventImageRef,
+        display_img[0]
+      );
+      const display_img_url = await getDownloadURL(uploadTaskSnapshot.ref);
+
       await submitForm(
         full_name,
         dob,
@@ -184,6 +209,7 @@ export const IndividualOnboarding: FC = () => {
         company,
         cv_url,
         portfolio_link_url,
+        display_img_url,
         userType ?? "",
         npo_name
       );
@@ -218,6 +244,27 @@ export const IndividualOnboarding: FC = () => {
               </FormControl>
               <FormDescription>
                 Share with us how best to address you!
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {/* Profile Img field */}
+        <FormField
+          control={form.control}
+          name="display_img"
+          render={({ field }) => (
+            <FormItem className="flex flex-col py-2 px-8">
+              <FormLabel>Profile Image (Optional)</FormLabel>
+              <FormControl>
+                <Input
+                  type="file"
+                  placeholder="Upload a profile image"
+                  {...fileRef}
+                />
+              </FormControl>
+              <FormDescription>
+                Upload a pic of yourself for us to know you better!
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -276,15 +323,15 @@ export const IndividualOnboarding: FC = () => {
           render={({ field }) => (
             <FormItem className="flex flex-col py-2 px-8">
               <FormLabel>Gender</FormLabel>
-              <Select>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="What is your gender?" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="Male">Male</SelectItem>
-                  <SelectItem value="Female">Female</SelectItem>
+                  <SelectItem value="male">Male</SelectItem>
+                  <SelectItem value="female">Female</SelectItem>
                 </SelectContent>
               </Select>
             </FormItem>
@@ -301,12 +348,17 @@ export const IndividualOnboarding: FC = () => {
                   <FormLabel>
                     What is the name of the NPO you'd like to join
                   </FormLabel>
-                  <Select>
+
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select the NPO you'd like to join" />
                       </SelectTrigger>
                     </FormControl>
+
                     <SelectContent>
                       {npos.map((npo) => (
                         <SelectItem key={npo.name} value={npo.name}>
@@ -315,6 +367,7 @@ export const IndividualOnboarding: FC = () => {
                       ))}
                     </SelectContent>
                   </Select>
+
                   <FormDescription>
                     Your request to join the community will be sent to the admin
                     and you'll be notified once you're in!

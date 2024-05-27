@@ -1,6 +1,7 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { NavMenu } from "./NavMenu";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +29,8 @@ export const Nav: FC = () => {
   const handleClick = () => {
     navigate("/public-onboarding");
   };
+
+  useEffect(() => console.log("NavOverlay rendered"));
 
   const mobileHeader = (
     <nav className="flex flex-row justify-between items-center md:hidden">
@@ -69,12 +72,20 @@ export const Nav: FC = () => {
         {isAuthenticated ? (
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <ImageWithFallback
-                src={userInfo?.display_img_url}
-                alt="navbar profile"
-                fallback={defaultUserImg}
-                className="h-8 w-8"
-              />
+              {userInfo?.display_img_url ? (
+                <img
+                  src={userInfo?.display_img_url}
+                  className="h-8 w-8 rounded-lg"
+                  alt="navbar profile"
+                />
+              ) : (
+                <ImageWithFallback
+                  src={userInfo?.display_img_url}
+                  alt="navbar profile"
+                  fallback={defaultUserImg}
+                  className="h-8 w-8"
+                />
+              )}
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <div className="px-2">Hi {userInfo?.full_name}</div>
@@ -107,7 +118,7 @@ export const Nav: FC = () => {
       <main className="flex flex-row h-full overflow-hidden">
         <div className="hidden md:flex flex-col p-6 w-[300px] border-t-2 border-secondary">
           <NavMenu />
-          {isAuthenticated && <LogoutButton />}
+          {/* {isAuthenticated && <LogoutButton />} */}
         </div>
         <div className="w-[calc(100%-300px)] border-t-2 border-secondary overflow-auto">
           <Outlet />

@@ -90,6 +90,7 @@ export const UserProvider: FunctionComponent<UserProviderProps> = ({
     // npoName: string,
     info?: Member
   ): void => {
+    console.log("context updated");
     setUserId(id);
     setUserRole(role);
     setUserNpo(npo);
