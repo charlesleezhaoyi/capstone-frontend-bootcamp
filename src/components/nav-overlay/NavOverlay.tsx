@@ -1,6 +1,7 @@
-import React, { FC, ReactNode, useEffect } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { NavMenu } from "./NavMenu";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,9 +26,32 @@ export const Nav: FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useAuth0();
   const { userId, userInfo } = useUser();
+  const [profileBubble, setProfileBubble] = useState<
+    React.ReactNode | undefined
+  >(undefined);
   const handleClick = () => {
     navigate("/public-onboarding");
   };
+
+  useEffect(() => {
+    setProfileBubble(
+      <DropdownMenu>
+        <DropdownMenuTrigger>
+          <ImageWithFallback
+            src={userInfo?.display_img_url}
+            alt="navbar profile"
+            fallback={defaultUserImg}
+            className="h-8 w-8"
+          />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <div className="px-2">Hi {userInfo?.full_name}</div>
+          <DropdownMenuItem onClick={() => logout()}>Logout</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+    console.log(userInfo);
+  }, [userInfo]);
 
   const mobileHeader = (
     <nav className="flex flex-row justify-between items-center md:hidden">
@@ -67,22 +91,7 @@ export const Nav: FC = () => {
       <h3 className="hidden md:flex">GoodHub SEA</h3>
       <div className="flex flex-row items-center">
         {isAuthenticated ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger>
-              <ImageWithFallback
-                src={userInfo?.display_img_url}
-                alt="navbar profile"
-                fallback={defaultUserImg}
-                className="h-8 w-8"
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <div className="px-2">Hi {userInfo?.full_name}</div>
-              <DropdownMenuItem onClick={() => logout()}>
-                Logout
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          profileBubble
         ) : (
           <>
             <LoginButton npo_name={npo_name ?? ""}></LoginButton>

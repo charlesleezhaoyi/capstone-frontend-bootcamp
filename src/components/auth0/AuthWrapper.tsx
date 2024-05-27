@@ -103,7 +103,7 @@ const AuthWrapper: React.FC<AuthWrapperProps> = ({ children = null }) => {
         );
         loginUserContext(
           memberInfo.data.data.id,
-          role.data.data[0].role_id,
+          role.data[0].role_id,
           userSelectedNpo,
           memberInfo.data.data
         );
